@@ -1,0 +1,62 @@
+<app-barratareas></app-barratareas>
+
+<div class="row">
+<div class="col-3">
+  <mat-form-field>
+    <mat-label>Producto</mat-label>
+    <mat-select  name="codProducto" [(ngModel)]="codProducto" >
+            <mat-option  *ngFor="let pro of dataProducto" [value]="pro.id">{{pro.nombre}}</mat-option>
+    </mat-select>
+  </mat-form-field></div>
+<div class="col-4">
+
+ <mat-form-field>
+    <mat-label>Fecha inicio</mat-label>
+    <input matInput [matDatepicker]="myPicker" [(ngModel)]="selectedMoment" placeholder="Fecha" required>
+    <mat-hint>DD/MM/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="myPicker"></mat-datepicker-toggle>
+    <mat-datepicker #myPicker></mat-datepicker>
+  </mat-form-field>
+</div>
+<div class="col-3">
+    <mat-form-field>
+    <mat-label>Fecha fin</mat-label>
+    <input matInput [matDatepicker]="myPicker1" [(ngModel)]="selectedMoment2" placeholder="Fecha fin" required>
+    <mat-hint>DD/MM/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="myPicker1"></mat-datepicker-toggle>
+    <mat-datepicker #myPicker1></mat-datepicker>
+  </mat-form-field>
+</div>
+<div class="col-2">
+    <button type="button"  (click)="enviarFechas()"  class="btn  btn-info btn-lg">Consultar</button>
+</div>
+
+</div>
+
+  <section>
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-chart">
+                <div class="card-header card-header-success">
+                    <h1>Predicción de mermas por productos</h1>
+                    <div class="ct-chart" id="dailySalesChart"></div>
+                </div>
+                <div class="card-body">
+
+                    <h4 class="card-title">Productos</h4>
+                    <p class="card-category">
+                               </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <!--<i class="material-icons">access_time</i> updated 4 minutes ago-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </section>
+
+
+
+
+

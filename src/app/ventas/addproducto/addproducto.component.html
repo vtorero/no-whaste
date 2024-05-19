@@ -1,0 +1,37 @@
+<div>
+    <h1 mat-dialog-title>Agregar Producto</h1>
+    <form #formItem2="ngForm">
+    <div mat-dialog-content>
+        <div style="display: flex;flex-direction: column; margin:1rem auto; width: 600px; padding: 1rem;">
+          <mat-form-field>
+            <mat-label>Producto</mat-label>
+            <mat-select  name="codProducto" #codProducto="ngModel" [(ngModel)]="data.codProducto" (ngModelChange)="handleProducto(data.codProducto)" required >
+              <input class="buscador" (keyup)="onKey($event.target.value)" placeholder="Buscar..">
+              <mat-option  *ngFor="let pro of dataProducto" [value]="pro.id">{{pro.nombre}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Stock</mat-label>
+            <mat-select name="codProductob" #codProductob="ngModel" [(ngModel)]="data.codProductob" required>
+              <mat-option  *ngFor="let prob of dataExistencias" (onSelectionChange)="change($event)" [value]="prob">Producido el: {{prob.fecha_produccion}} | stock disp:{{prob.cantidad}} {{prob.unidad}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Unidad Medida</mat-label>
+            <input matInput name="unidadmedida" #unidadmedida="ngModel" [(ngModel)]="data.unidadmedida" type="text" [value]="data.unidadmedida" readonly required>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput (focusout)="verificaCantidad($event.target.value)" autocomplete="off"  name="cantidad" #cantidad="ngModel" [(ngModel)]="data.cantidad" type="number" placeholder="Cantidad" required>
+            <mat-error *ngIf="cantidad.hasError('required')">Cantidad Superior al Inventario</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput name="mtoValorUnitario" autocomplete="off" #mtoValorUnitario="ngModel" [(ngModel)]="data.mtoValorUnitario" type="number" placeholder=" S/.Precio" required>
+              </mat-form-field>
+              </div>
+    </div>
+  </form>
+    <div mat-dialog-actions>
+      <button  class="btn btn-danger" mat-button [mat-dialog-close]="true">Cerrar</button>
+      <button class="btn btn-primary" mat-button [mat-dialog-close]="data" [disabled]="!formItem2.form.valid" cdkFocusInitial>Confirmar</button>
+    </div>
+    </div>

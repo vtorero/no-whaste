@@ -1,0 +1,10 @@
+.example-button-row{
+    background-color: white;
+}
+.mat-mdc-row.hovered {
+    background: rgb(146, 107, 107);
+}
+
+.mat-mdc-row.highlighted {
+  background: #999;
+}

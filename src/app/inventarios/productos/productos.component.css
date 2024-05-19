@@ -1,0 +1,12 @@
+.example-button-row{
+    background-color: white;
+}
+.mat-mdc-row.hovered {
+    background: rgb(226, 175, 175);
+}
+
+.mat-mdc-row.highlighted {
+  background: rgb(241, 232, 232);
+}
+mat-header-cell{font-size: 11px; font-weight: 700;}
+mat-cell{font-size: 12px;}

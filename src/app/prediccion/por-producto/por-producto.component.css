@@ -1,0 +1,67 @@
+table{width: 100%;}
+
+.example-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+  }
+
+  .example-header {
+    min-height: 64px;
+    padding: 8px 24px 0;
+  }
+
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .mat-table {
+    overflow: auto;
+  }
+
+  .mat-row:nth-child(even){
+    background-color:#ccccccff
+  }
+
+.mat-row:nth-child(odd){
+    background-color:rgb(250, 250, 250)
+}
+/*
+.encabezado{
+      background-color:#0f498aff;
+      font-size: 18px;
+}
+/*.titulotabla{
+  font-size: 17px !important;
+  font-weight: bolder;
+  color:#ffffff
+}*/
+
+.btn_ingreso{
+  background-color: rgb(6, 58, 228);
+  background-color: #17a2b8;
+  color:white;
+}
+.btn_cpm{
+  background-color:#28a745;
+  color:white;
+}
+.btn_imp{
+  background-color:#ffc107;
+  color:white;
+}
+
+.btn_per{
+  background-color:#dc3545;
+  color:white;
+}
+.btn_per h4{
+  font-weight: bolder;
+  font-size:22px;
+}
+
+.mat-footer-cell{
+  text-align: center;
+    font-weight: bold;
+}

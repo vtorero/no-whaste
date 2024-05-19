@@ -1,0 +1,217 @@
+<div style="height: auto;overflow-y:auto;overflow-x:hidden;padding-left: 10px;">
+    <form #formGeneral="ngForm">
+        <div mat-dialog-content>
+          <button class="close" mat-button mat-dialog-title (click)="cancelar()">x</button>
+          <h3>Registro de Venta</h3>
+          <!--<span style="color:red" *ngIf="id_vendedor.touched && !id_vendedor.valid">Seleccionar el vendedor</span>-->
+          <div style="display: flex;flex-direction:column; margin:0.5rem auto; width: 900px; padding: 1rem;">
+            <div class="row">
+              <div class="col-lg-4">
+            <mat-form-field>
+              <mat-label>Comprobante</mat-label>
+              <mat-select name="comprobante" #comprobante="ngModel" [(ngModel)]="data.comprobante" required>
+                <mat-option [value]="">Seleccionar</mat-option>
+                <mat-option *ngFor="let cat of dataComprobantes" [value]="cat.id">{{cat.tipo}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="comprobante.hasError('required')">Seleccionar</mat-error>
+            </mat-form-field>
+            </div>
+            <div class="col-lg-4">
+            <mat-checkbox name="imprimir" *ngIf="data.comprobante!='Pendiente'" #imprimir="ngModel" [(ngModel)]="data.imprimir">Visualizar comprobante</mat-checkbox>
+            </div>
+            <div class="col-lg-4">
+              <mat-radio-group aria-label="Seleccione tipo" name="tipoDoc" #tipoDoc="ngModel" [(ngModel)]="data.tipoDoc"  required *ngIf="data.comprobante=='Pendiente'">
+                <mat-radio-button value="1" (change)="radioChange($event)">Con DNI</mat-radio-button>&nbsp;
+                <mat-radio-button value="2" (change)="radioChange($event)">Con RUC</mat-radio-button>
+              </mat-radio-group>
+            </div>
+            </div>
+            <!--<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+              <input type="checkbox" (change)="clienteNuevo($event)"class="custom-control-input" id="customSwitch3">
+              <label class="custom-control-label" for="customSwitch3">&nbsp;Cliente Nuevo</label>
+            </div>-->
+            <div class="row">
+              <div class="col-lg-4">
+
+                <mat-form-field *ngIf="!data.comprobante">
+                  <mat-label>Cliente</mat-label>
+              <mat-select name="cliente" #cliente="ngModel" [(ngModel)]="data.cliente">
+                  <mat-option [value]="">Seleccionar</mat-option>
+                  </mat-select>
+              </mat-form-field>
+
+            <mat-form-field *ngIf="data.comprobante=='Boleta' || (data.comprobante=='Pendiente' && filter=='1')">
+              <mat-label>Cliente con DNI</mat-label>
+              <mat-select name="cliente" #cliente="ngModel" [(ngModel)]="data.cliente"  required>
+                <input class="buscador" (keyup)="onKeyCliente($event.target.value)" placeholder="Buscar cliente..">
+                <mat-option [value]="">Seleccionar</mat-option>
+                <mat-option *ngFor="let cli of dataClientes" [value]="cli">
+                  {{cli.nombre}} {{cli.apellido}}
+                </mat-option>
+                </mat-select>
+                <mat-error *ngIf="cliente.hasError('required')">Seleccionar</mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="data.comprobante=='Factura' || data.comprobante=='Factura Gratuita' ||  (data.comprobante=='Pendiente' && filter=='2')">
+              <mat-label>Cliente CON RUC</mat-label>
+              <mat-select name="cliente" #cliente="ngModel" [(ngModel)]="data.cliente" (onSelectionChange)="change($event)" required>
+                <input class="buscador" (keyup)="onKeyRuc($event.target.value)" placeholder="Buscar con RUC..">
+                <mat-option [value]="">Seleccionar</mat-option>
+                <mat-option *ngFor="let cli of dataEmpresas" [value]="cli">
+                  {{cli.razon_social}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="cliente.hasError('required')">Seleccionar</mat-error>
+            </mat-form-field>
+            </div>
+            <div class="col-lg-4">
+            <mat-form-field>
+              <mat-label>Vendedor</mat-label>
+
+              <mat-select name="id_vendedor" #id_vendedor="ngModel" [(ngModel)]="data.id_vendedor" required>
+                <input class="buscador" (keyup)="onKeyVendedor($event.target.value)" placeholder="Buscar vendedor..">
+                 <mat-option *ngFor="let ven of dataVendedores" [value]="ven.id">{{ven.nombre}} {{ven.apellidos}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="id_vendedor.hasError('required')">Seleccionar</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-4">
+            <mat-form-field>
+              <mat-label>Fecha de Venta</mat-label>
+              <input matInput [matDatepicker]="myPicker" name="fecha" #fecha="ngModel" [(ngModel)]="data.fecha" placeholder="Fecha" required>
+              <mat-hint>DD/MM/YYYY</mat-hint>
+              <mat-datepicker-toggle matSuffix [for]="myPicker"></mat-datepicker-toggle>
+              <mat-datepicker #myPicker></mat-datepicker>
+            </mat-form-field>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4">
+                <mat-form-field>
+                  <mat-label>Valor neto S/.</mat-label>
+                  <input matInput name="valor_neto" [value]="valor_neto | number" type="text" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field>
+                  <mat-label>Monto IGV S/.</mat-label>
+                    <input matInput name="monto_igv" [value]="monto_igv | number" type="text"  readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field>
+                  <mat-label>Monto Total S/.</mat-label>
+                    <input matInput name="valor_total" [value]="valor_total | number" type="text" readonly>
+                </mat-form-field>
+            </div>
+
+              </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <mat-form-field *ngIf="data.comprobante!='Factura Gratuita'">
+                    <mat-label>Forma de Pago</mat-label>
+                    <mat-select name="formaPago" #formaPago="ngModel" [(ngModel)]="data.formaPago" required>
+                      <mat-option *ngFor="let cat of dataFormapago" [value]="cat.id">{{cat.id}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formaPago.hasError('required')">Seleccionar</mat-error>
+                   </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                  <mat-form-field *ngIf="data.formaPago=='Credito'">
+                    <mat-label>Fecha de Pago</mat-label>
+                    <input (dateInput)="Comparar(data.fecha,data.fechaPago)" matInput [matDatepicker]="myPicker2" name="fechaPago" #fechaPago="ngModel" [(ngModel)]="data.fechaPago" placeholder="Fecha de pago" required>
+                    <mat-datepicker-toggle matSuffix [for]="myPicker2"></mat-datepicker-toggle>
+                    <mat-datepicker #myPicker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                </div>
+              <div class="row">
+                  <mat-form-field style="width:97%;">
+                    <mat-label>Observación</mat-label>
+                    <textarea matInput name="observacion" name="observacion" #observacion="ngModel" [(ngModel)]="data.observacion" rows="1"></textarea>
+                  </mat-form-field>
+
+
+              </div>
+      </div>
+          </div>
+      </form>
+      <div style="text-align:right;margin-bottom:-48px;padding-right:23px;">
+        <button class="btn btn-danger" [disabled]="!formGeneral.form.valid && data.detalleVenta"   mat-raised-button (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-primary" mat-raised-button [mat-dialog-close]="data" [disabled]="!formGeneral.form.valid || !habilita_envio" cdkFocusInitial>Registrar</button>
+      </div>
+
+      <div class="example-container mat-elevation-z8" style="overflow-y:scroll;height:auto;margin-top:5px;">
+       <button mat-raised-button class="btn btn-success addproducto" (click)="abrirDialog()" [disabled]="!formGeneral.form.valid">Agregar Items</button>
+        <mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Item</mat-header-cell>
+            <mat-cell *matCellDef="let row;let i = index"><b>{{i+1}}</b></mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="id_producto">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Código</mat-header-cell>
+            <mat-cell *matCellDef="let row;let i = index">{{row.codProductob.codigo}} </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="nombre">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.codProductob.nombre}} </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="cantidad">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Unidad</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.unidadmedida}} </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="peso">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>cantidad</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.cantidad | number }} </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="precio">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+            <mat-cell *matCellDef="let row">S/. {{row.mtoValorUnitario | number }} </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="subtotal">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal</mat-header-cell>
+            <mat-cell *matCellDef="let row">S/.{{ row.mtoValorUnitario*row.cantidad | number }}
+            </mat-cell>
+
+          </ng-container>
+          <ng-container matColumnDef="borrar">
+            <th mat-header-cell *matHeaderCellDef> Opciones </th>
+            <td mat-cell *matCellDef="let row; let j = index">
+              <button class="btn btn-primary" (click)="deleteTicket(row,j)">Eliminar</button>
+            </td>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+          <mat-row *matRowDef="let row; columns:displayedColumns;"></mat-row>
+
+        </mat-table>
+      </div>
+      <div class="row" style="margin-top:15px;">
+        <div class="col-lg-4">
+          <mat-form-field>
+            <mat-label>Valor neto S/.</mat-label>
+            <input matInput name="valor_neto" [value]="valor_neto | number" type="text" readonly>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4">
+          <mat-form-field>
+            <mat-label>Monto IGV S/.</mat-label>
+              <input matInput name="monto_igv" [value]="monto_igv | number" type="text"  readonly>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4">
+          <mat-form-field>
+            <mat-label>Monto Total S/.</mat-label>
+              <input matInput name="valor_total" [value]="valor_total | number" type="text" readonly>
+          </mat-form-field>
+      </div>
+
+        </div>
+    </div>
+
+
