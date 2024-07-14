@@ -14,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 $app = new Slim\Slim();
 //$db = new mysqli("localhost","marife","libido16","no-whaste");
-$db = new mysqli("localhost","marife","libido16","no-whaste");
+$db = new mysqli("localhost","root","loco","marife");
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 mysqli_set_charset($db, 'utf8');
@@ -52,6 +52,111 @@ $app->get("/productos",function() use($db,$app){
         echo  $respuesta;
 
     });
+
+    /*
+  //Total de Ventas del Mes:
+SELECT SUM(valor_total) AS total_ventas_mes 
+FROM ventas 
+WHERE MONTH(fecha) = MONTH(CURRENT_DATE()) 
+  AND YEAR(fecha) = YEAR(CURRENT_DATE()) 
+  AND DAY(fecha) <= DAY(CURRENT_DATE());//*
+  */
+
+  /* 
+   HTTP 1.1
+  CRUD
+  *C*REATE -> POST
+  *R*EAD -> GET
+  *U*PDATE -> PUT
+  *D*ELETE -> DELETE
+  */
+
+  $app->get("/ventas/total",function() use($db,$app){
+    header("Content-type: application/json; charset=utf-8");
+    $resultado = $db->query("SELECT SUM(valor_total) AS total_ventas_mes  FROM ventas WHERE MONTH(fecha) = MONTH(CURRENT_DATE()) AND YEAR(fecha) = YEAR(CURRENT_DATE())AND DAY(fecha) <= DAY(CURRENT_DATE());");
+    $prods=array();
+        while ($fila = $resultado->fetch_array()) {
+
+            $prods[]=$fila;
+        }
+        $respuesta=json_encode($prods);
+        echo  $respuesta;
+
+});
+
+    $app->get("/mermas/total",function() use($db,$app){
+        header("Content-type: application/json; charset=utf-8");
+        $resultado = $db->query("SELECT SUM(merma) AS total_mermas FROM inventario where MONTH (fecha_vencimiento) = MONTH (CURRENT_DATE())AND YEAR(fecha_vencimiento) = YEAR(CURRENT_DATE()) 
+         AND DAY(fecha_vencimiento) <= DAY(CURRENT_DATE());");
+        $prods=array();
+            while ($fila = $resultado->fetch_array()) {
+    
+                $prods[]=$fila;
+            }
+            $respuesta=json_encode($prods);
+            echo  $respuesta;
+
+        });
+
+        $app->get("/oferta/total",function() use($db,$app){
+            header("Content-type: application/json; charset=utf-8");
+            $resultado = $db->query("SELECT COUNT(valor_total) AS total_oferta_mes FROM ventas WHERE MONTH(fecha) = MONTH(CURRENT_DATE())  AND YEAR(fecha) = YEAR(CURRENT_DATE())AND DAY(fecha) <= DAY(CURRENT_DATE());");
+            $prods=array();
+                while ($fila = $resultado->fetch_array()) {
+        
+                    $prods[]=$fila;
+                }
+                $respuesta=json_encode($prods);
+                echo  $respuesta;
+    
+            });
+
+
+            $app->get("/demanda/total",function() use($db,$app){
+                header("Content-type: application/json; charset=utf-8");
+                $resultado = $db->query("SELECT COUNT(*) AS total_demanda_mes FROM compras c WHERE MONTH(fecha) = MONTH(CURRENT_DATE()) AND YEAR(fecha) = YEAR(CURRENT_DATE()) AND DAY(fecha) <= DAY(CURRENT_DATE());");
+                $prods=array();
+                    while ($fila = $resultado->fetch_array()) {
+            
+                        $prods[]=$fila;
+                    }
+                    $respuesta=json_encode($prods);
+                    echo  $respuesta;
+        
+                });
+    
+            $app->get("/ventas-semana/total",function() use($db,$app){
+                    header("Content-type: application/json; charset=utf-8");
+                    $resultado = $db->query("SELECT  SUM(valor_total) AS total_ventas_semana FROM ventas v WHERE YEARWEEK(fecha)=YEARWEEK(CURRENT_DATE());");
+                        while ($fila = $resultado->fetch_array()) {
+                
+                            $prods[]=$fila;
+                        }
+                        $respuesta=json_encode($prods);
+                        echo  $respuesta;
+            
+                    });
+
+
+                    $app->get("/merma-semana/total",function() use($db,$app){
+                        header("Content-type: application/json; charset=utf-8");
+                        $resultado = $db->query("SELECT SUM(merma) AS total_kilos_merma_semana FROM inventario WHERE YEARWEEK(fecha_vencimiento)=YEARWEEK(CURRENT_DATE());");
+                        $prods=array();
+                            while ($fila = $resultado->fetch_array()) {
+                    
+                                $prods[]=$fila;
+                            }
+                            $respuesta=json_encode($prods);
+                            echo  $respuesta;
+                
+                        });
+
+
+
+
+
+
+
 
     $app->get("/dosimetria",function() use($db,$app){
         header("Content-type: application/json; charset=utf-8");
