@@ -14,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 $app = new Slim\Slim();
 //$db = new mysqli("localhost","marife","libido16","no-whaste");
-$db = new mysqli("localhost","root","loco","marife");
+$db = new mysqli("kvconsult.com","kvconsul_no-whaste","Drupal2024$","kvconsul_no-whaste");
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 mysqli_set_charset($db, 'utf8');
