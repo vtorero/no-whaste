@@ -418,7 +418,7 @@ while ($row = $query->fetch_array()) {
         $json = $app->request->getBody();
         $dat = json_decode($json, true);
 
-        $query=$db->query("SELECT DATE_FORMAT(fecha,'%m'),DATE_FORMAT(fecha,'%M') mes,sum(valor_total) total FROM notas where fecha between '2023-01-01' and '2023-04-31' group by 1,2 order by 1 desc");
+        $query=$db->query("SELECT DATE_FORMAT(fecha,'%m'),DATE_FORMAT(fecha,'%M') mes,sum(valor_total) total FROM notas where fecha between  DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND CURDATE() group by 1,2 order by 1 desc");
        $waste=array();
        $season=array();
 
