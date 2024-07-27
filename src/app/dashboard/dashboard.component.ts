@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {VentasService} from './services/ventas.service';
+import { InventarioService } from './services/inventario.service';
+import { ComprasService } from './services/compras.service';
 import * as Chartist from 'chartist';
 
 @Component({
@@ -10,12 +12,32 @@ import * as Chartist from 'chartist';
 })
 export class DashboardComponent implements OnInit {
   totalVentas: string; // Cambia totalVentas$ a totalVentas para almacenar el valor desuscrito
+  totalOfertas: string;
+  totalVentasSemana: string;
+  totalMermas: string;
+  totalMermasSemana: string;
+  totalDemanda: string;
 
-  constructor(private ventasService: VentasService) {}
+  constructor(private ventasService: VentasService,private comprasService: ComprasService,private inventarioService: InventarioService) {}
 
   ngOnInit() {
     this.ventasService.getTotalVentas().subscribe((data) => {
       this.totalVentas = data[0]?.total_ventas_mes;
+    });
+    this.ventasService.getTotalOferta().subscribe((data) => {
+      this.totalOfertas = data[0]?.total_oferta_mes;
+    });
+    this.ventasService.getVentasSemana().subscribe((data) => {
+      this.totalVentasSemana = data[0]?.total_ventas_semana;
+    });
+    this.inventarioService.getTotalMermas().subscribe((data) => {
+      this.totalMermas = data[0]?.total_mermas;
+    });
+    this.inventarioService.getTotalMermasSemana().subscribe((data) => {
+      this.totalMermasSemana = data[0]?.total_kilos_merma_semana;
+    });
+    this.comprasService.getTotalDemanda().subscribe((data) => {
+      this.totalDemanda = data[0]?.total_demanda_mes;
     });
     this.initializeCharts();
   }
