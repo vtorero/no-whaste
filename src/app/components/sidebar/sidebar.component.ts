@@ -25,8 +25,12 @@ export const ROUTES: RouteInfo[] = [
     {pat:'/comparar/lineal-simple', tit: 'Regresión Lineal simple',  icn:'bubble_chart',cls:'library_books'},
   ]},
     /*{ path: '/redneuronal', title: 'Red Neuronal',  icon:'dashboard', class: '',child:[]},*/
-    { path: '/regresion-multiple', title: 'Predicción Mermas',  icon:'dashboard', class: '',
-    child:[{pat:'/prediccion-producto', tit: 'Por producto',  icn:'bubble_chart',cls:'library_books'}]},
+    { path: '/regresion-multiple', title: 'Predicciones',  icon:'dashboard', class: '',
+    child:[{pat:'/prediccion/mermas', tit: 'Mermas',  icn:'bubble_chart',cls:'library_books'},
+    {pat:'/prediccion/reduccion', tit: 'Reducción',  icn:'bubble_chart',cls:'library_books'},
+    {pat:'/prediccion/estrategias', tit: 'Estrategias',  icn:'bubble_chart',cls:'library_books'},
+    {pat:'/prediccion/proyeccion', tit: 'Proyección',  icn:'bubble_chart',cls:'library_books'},
+    ]},
     { path: '/productos', title: 'Productos',  icon:'library_books', class: '' ,
               child:[{pat:'/productos/listado', tit: 'Listado',  icn:'bubble_chart',cls:'library_books'},
               {pat:'/productos/inventario', tit: 'Inventarios',  icn:'bubble_chart',cls:'library_books'}

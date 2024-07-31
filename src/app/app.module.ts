@@ -41,6 +41,10 @@ import { PorProductoComponent } from './prediccion/por-producto/por-producto.com
 import { LinealMultipleComponent } from './compara-modelos/lineal-multiple/lineal-multiple.component';
 import { ModeloClasificacionComponent } from './compara-modelos/modelo-clasificacion/modelo-clasificacion.component';
 import { LinealSimpleComponent } from './compara-modelos/lineal-simple/lineal-simple.component';
+import { MermasComponent } from './prediccion/mermas/mermas.component';
+import { ReduccionComponent } from './prediccion/reduccion/reduccion.component';
+import { EstrategiaComponent } from './prediccion/estrategia/estrategia.component';
+import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.component';
 
 @NgModule({
   imports: [
@@ -89,6 +93,10 @@ import { LinealSimpleComponent } from './compara-modelos/lineal-simple/lineal-si
     LinealMultipleComponent,
     ModeloClasificacionComponent,
     LinealSimpleComponent,
+    MermasComponent,
+    ReduccionComponent,
+    EstrategiaComponent,
+    ProyeccionComponent,
     
     
     ],
