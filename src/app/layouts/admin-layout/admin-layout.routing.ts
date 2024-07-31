@@ -27,6 +27,10 @@ import { Component } from '@angular/core';
 import { LinealMultipleComponent } from '../../compara-modelos/lineal-multiple/lineal-multiple.component';
 import { ModeloClasificacionComponent } from '../../compara-modelos/modelo-clasificacion/modelo-clasificacion.component';
 import { LinealSimpleComponent } from '../../compara-modelos/lineal-simple/lineal-simple.component';
+import { MermasComponent } from 'app/prediccion/mermas/mermas.component';
+import { ReduccionComponent } from 'app/prediccion/reduccion/reduccion.component';
+import { EstrategiaComponent } from 'app/prediccion/estrategia/estrategia.component';
+import { ProyeccionComponent } from 'app/prediccion/proyeccion/proyeccion.component';
 
 export const AdminLayoutRoutes: Routes = [
     // {
@@ -95,5 +99,13 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'maps',           component: MapsComponent },
     { path: 'notifications',  component: NotificationsComponent },
     { path: 'upgrade',        component: UpgradeComponent },
-    {path:'prediccion-producto',component:PorProductoComponent}
+    {path:'prediccion-producto',component:PorProductoComponent},
+    {path:'prediccion',
+    children:[
+        {path:'mermas',component:MermasComponent},
+        {path:'reduccion',component:ReduccionComponent},
+        {path:'estrategias',component:EstrategiaComponent},
+        {path:'proyeccion',component:ProyeccionComponent}
+    ]
+    }
 ];
