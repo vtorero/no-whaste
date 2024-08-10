@@ -14,7 +14,8 @@ require_once 'vendor/autoload.php';
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-$app = new Slim\App();
+
+$app = new Slim\Slim();
 
 $db = new mysqli("kvconsult.com", "kvconsul_no-whaste", "Drupal2024$", "kvconsul_no-whaste");
 
@@ -25,13 +26,13 @@ if ($db->connect_errno) {
 
 function insertCompras($db) {
     $comprasData = [
-        ['Factura', 'F001-1500', 'Carne de cerdo', 1],
-        ['Factura', 'F001-1501', 'Insumos Preparación', 21],
+        ['Factura', 'F001-15', 'Carne de cerdo', 1],
+        ['Factura', 'F001-14', 'Insumos Preparación', 21],
         // Agrega más filas según sea necesario
     ];
     $today = date('Y-m-d');
     foreach ($comprasData as $index => $compra) {
-        $num_comprobante = $compra[1] . '-' . ($index + 1500);
+        $num_comprobante = $compra[1] . ($index + rand(10,99));
         $descripcion = $compra[2];
         $id_proveedor = $compra[3];
         $query = "INSERT INTO `compras` (`comprobante`, `num_comprobante`, `descripcion`, `fecha`, `id_proveedor`, `id_usuario`, `fecha_registro`) VALUES
@@ -68,13 +69,15 @@ function insertInventario($db) {
     $today = date('Y-m-d');
     $nextMonth = date('Y-m-d', strtotime("+1 month"));
     foreach ($inventarioData as $index => $item) {
+     $merma = (string) rand(1.00,10.00);
         $query = "INSERT INTO `inventario` (`id_producto`, `presentacion`, `unidad`, `granel`, `cantidad`, `peso`, `merma`, `fecha_produccion`, `fecha_vencimiento`, `estado`, `ciclo`, `id_usuario`, `fecha_registro`) VALUES
-        ({$item[0]}, '{$item[1]}', '{$item[2]}', '0.00', '{$item[3]}', '0.00', '0.00', '{$today}', '{$nextMonth}', '1', 2, 1, '{$today} 00:00:00')";
-        $db->query($query);
+        ({$item[0]}, '{$item[1]}', '{$item[2]}', '0.00', '{$item[3]}', '0.00','{$merma}' , '{$today}', '{$nextMonth}', '1', 2, 1, '{$today} 00:00:00')";
+      $db->query($query);
+
     }
 }
 
-$app->get('/data/api', function (Request $request, Response $response, array $args) use ($db) {
+$app->get('/data/api', function() use ($app,$db) {
     insertCompras($db);
     insertVentas($db);
     insertInventario($db);
@@ -83,7 +86,9 @@ $app->get('/data/api', function (Request $request, Response $response, array $ar
         'status' => 'success',
         'message' => 'Data inserted successfully'
     ];
-    return $response->withJson($result);
+
+    echo  json_encode($result);
+
 });
 
 $app->run();
