@@ -7,7 +7,7 @@ import {Global} from 'app/global';
 })
 export class InventarioService {
   private apiUrl = Global.BASE_API_URL + '/api.php/mermas/total';
-  private apiMermasSemana = Global.BASE_API_URL + '/api.php/mermas-semana/total';
+  private apiMermasSemana = Global.BASE_API_URL + '/api.php/merma-semana/total';
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +15,6 @@ export class InventarioService {
     return this.http.get<any>(this.apiUrl);
   }
   getTotalMermasSemana(): Observable<any> {
-    return this.http.get<any>(this.apiMermasSemana );
+    return this.http.get<any>(this.apiMermasSemana);
   }
 }
