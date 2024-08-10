@@ -8,13 +8,13 @@ if($method == "OPTIONS") {
     die();
 }
 require_once 'vendor/autoload.php';
-require_once 'vendor/regression.php';
+require_once 'regression.php';
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 
 $app = new Slim\Slim();
-$db = new mysqli("localhost","marife","libido16","frdash2");
+$db = new mysqli("localhost","kvconsul_no-whaste","Drupal2024$","kvconsul_no-whaste");
 //$db = new mysqli("localhost","marife","libido16","frdash_dev");
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -54,7 +54,7 @@ $app->get("/api",function() use($db,$app) {
 
     $query=$db->query("SELECT sc.id, sc.nombre,count(*) total    from ventas v, venta_detalle vd, productos pd,categorias cat,sub_categorias sc
     where v.id=vd.id_venta and vd.id_producto=pd.id and pd.id_categoria=cat.id and pd.id_subcategoria=sc.id
-    and v.fecha between '2022-03-01' and '2022-03-31' group by 1 order by 3 desc limit 1;");
+    and v.fecha between DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND CURDATE()  group by 1 order by 3 desc limit 1;");
        $mes1=array();
 
     while ($row = $query->fetch_array()) {
@@ -329,7 +329,7 @@ while ($row = $query->fetch_array()) {
     when 11 then '4'
     when 12 then '4'
   end as cod_estacion,
-  DATE_FORMAT(fecha,'%y%m') mes,sum(valor_total) total FROM notas where fecha between '2023-01-01' and '2023-04-30' group by 1,2,3 order by 3 asc");
+  DATE_FORMAT(fecha,'%y%m') mes,sum(valor_total) total FROM notas where fecha between DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND CURDATE() group by 1,2,3 order by 3 asc");
        $waste=array();
        $season=array();
 
@@ -374,7 +374,7 @@ while ($row = $query->fetch_array()) {
        $query=$db->query("SELECT DATE(v.fecha),DATE_FORMAT(v.fecha,'%d-%m-%y') fecha, count(vd.id_producto) total
        from ventas v, venta_detalle vd, productos pd,categorias cat,sub_categorias sc
        where v.id=vd.id_venta and vd.id_producto=pd.id and pd.id_categoria=cat.id and pd.id_subcategoria=sc.id
-       and v.fecha between '2023-01-01' and '2023-07-31' group by 1,2 order by 1 asc;");
+       and v.fecha between DATE_SUB(CURDATE(), INTERVAL 3 MONTH)  and CURDATE() group by 1,2 order by 1 asc;");
       $ventas_por_dia=array();
 
 
@@ -418,7 +418,7 @@ while ($row = $query->fetch_array()) {
         $json = $app->request->getBody();
         $dat = json_decode($json, true);
 
-        $query=$db->query("SELECT DATE_FORMAT(fecha,'%m'),DATE_FORMAT(fecha,'%M') mes,sum(valor_total) total FROM notas where fecha between  DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND CURDATE() group by 1,2 order by 1 desc");
+        $query=$db->query("SELECT DATE_FORMAT(fecha,'%m'),DATE_FORMAT(fecha,'%M') mes,sum(valor_total) total FROM notas where fecha between DATE_SUB(CURDATE(), INTERVAL 3 MONTH)  and CURDATE() group by 1,2 order by 1 desc");
        $waste=array();
        $season=array();
 
