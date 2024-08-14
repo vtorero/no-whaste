@@ -8,7 +8,6 @@ import { ApiService } from 'app/api.service';
 import { Global } from 'app/global';
 import { DetalleVenta } from 'app/models/detalleVenta';
 import { Venta } from 'app/models/ventas';
-import { DateTimeAdapter } from 'ng-pick-datetime';
 import { OpenDialogComponent } from '../../dialog/open-dialog/open-dialog.component';
 import { addproductoComponent } from '../addproducto/addproducto.component';
 
