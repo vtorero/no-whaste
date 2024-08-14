@@ -8,7 +8,7 @@ import {
 import {HttpClient} from '@angular/common/http';
 import * as tf from '@tensorflow/tfjs';
 import {Chart} from 'chart.js/auto';
-
+import {Global} from 'app/global';
 @Component({
   selector: 'app-proyeccion',
   templateUrl: './proyeccion.component.html',
@@ -39,7 +39,7 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
   async fetchDataFromAPI(): Promise<void> {
     try {
       const response = await this.http
-        .get('https://franz.kvconsult.com/fapi-dev/data.php/api')
+        .get(`${Global.BASE_API_URL}/fapi-dev/data.php/api`)
         .toPromise();
       this.data = response;
 
@@ -58,12 +58,6 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
   async trainModel(): Promise<void> {
     try {
       const {sales, waste, demands, offers} = this.data;
-
-      console.log('Sales:', sales);
-      console.log('Wastes:', waste);
-      console.log('Demands:', demands);
-      console.log('Offers:', offers);
-
       // Ensure that all arrays have the same length and are not empty
       if (
         !sales ||
