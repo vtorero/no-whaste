@@ -1,0 +1,26 @@
+.loading-indicator {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 50px;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  font-size: 18px;
+  margin-top: 50px;
+}
+
+.controls {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.controls label {
+  margin-right: 10px;
+}
+
+.controls select {
+  padding: 5px;
+  font-size: 16px;
+}

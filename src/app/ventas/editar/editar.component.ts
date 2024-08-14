@@ -5,7 +5,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'app/api.service';
 import { Global } from 'app/global';
 import { Venta } from 'app/models/ventas';
-import { DateTimeAdapter } from 'ng-pick-datetime';
 
 
 function getCDR(nro,url) {

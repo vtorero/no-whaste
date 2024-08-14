@@ -1,6 +1,32 @@
-<div class="content">
-    <app-barratareas></app-barratareas>
-  <div class="container-fluid">
-<p>proyeccion works!</p>
-</div>
+<div class="container">
+  <h2>Sales Prediction</h2>
+
+  <!-- Dropdown to select the prediction range -->
+  <div class="form-group">
+    <label for="predictionRange">Select Prediction Range (Months):</label>
+    <select
+      id="predictionRange"
+      class="form-control"
+      (change)="onPredictionRangeChange($event)"
+    >
+      <option value="1">1 Month</option>
+      <option value="2">2 Months</option>
+      <option value="3" selected>3 Months</option>
+    </select>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="alert alert-info">
+    Loading data and training model, please wait...
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Chart container -->
+  <div *ngIf="!isLoading && !errorMessage" style="height: 400px">
+    <canvas #chartCanvas></canvas>
+  </div>
 </div>
