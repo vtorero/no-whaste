@@ -1,6 +1,11 @@
-<div class="content">
-    <app-barratareas></app-barratareas>
-  <div class="container-fluid">
-<p>reduccion works!</p>
-</div>
+<div>
+  <h1>Wastes Reduction</h1>
+  <label for="chartType">Select Chart Type: </label>
+  <select id="chartType" (change)="onChartTypeChange($event)">
+    <option value="percentage">Percentage Reduction</option>
+    <option value="waste">Waste Data</option>
+  </select>
+  <div style="height: 400px">
+    <canvas #chartCanvas></canvas>
+  </div>
 </div>
