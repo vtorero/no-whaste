@@ -152,11 +152,112 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
                         });
 
 
+    $app->get("/compras-hora/total", function() use($db, $app) {
+        header("Content-type: application/json; charset=utf-8");
+
+        $sql = "SELECT 
+                    CASE 
+                        WHEN HOUR(c.fecha_registro) = 12 THEN '12p'
+                        WHEN HOUR(c.fecha_registro) = 15 THEN '3p'
+                        WHEN HOUR(c.fecha_registro) = 18 THEN '6p'
+                        WHEN HOUR(c.fecha_registro) = 21 THEN '9p'
+                        WHEN HOUR(c.fecha_registro) = 0 THEN '12a'
+                        WHEN HOUR(c.fecha_registro) = 3 THEN '3a'
+                        WHEN HOUR(c.fecha_registro) = 6 THEN '6a'
+                        WHEN HOUR(c.fecha_registro) = 9 THEN '9a'
+                    END as hora, 
+                    COUNT(*) as total_compras 
+                FROM 
+                    compras c
+                WHERE 
+                    HOUR(c.fecha_registro) IN (0, 3, 6, 9, 12, 15, 18, 21)
+                GROUP BY 
+                    hora
+                ORDER BY 
+                    FIELD(hora, '12p', '3p', '6p', '9p', '12a', '3a', '6a', '9a');";
+
+        $resultado = $db->query($sql);
+
+        if ($resultado === false) {
+            die("Error executing query: " . $db->error);
+        }
+
+        $labels = [];
+        $series = [];
+
+        while ($fila = $resultado->fetch_array(MYSQLI_ASSOC)) {
+            $labels[] = $fila['hora'];
+            $series[] = (int)$fila['total_compras'];
+        }
+
+        $output = [
+            'labels' => $labels,
+            'series' => [$series]
+        ];
+
+        echo json_encode($output);
+    });
 
 
 
+    $app->get("/compras-dia/total", function() use($db, $app) {
+        header("Content-type: application/json; charset=utf-8");
+        $resultado = $db->query("SELECT 
+                                    CASE DAYOFWEEK(fecha)
+                                        WHEN 1 THEN 'D'
+                                        WHEN 2 THEN 'L'
+                                        WHEN 3 THEN 'M'
+                                        WHEN 4 THEN 'M'
+                                        WHEN 5 THEN 'J'
+                                        WHEN 6 THEN 'V'
+                                        WHEN 7 THEN 'S'
+                                    END as dia_semana, 
+                                    COUNT(*) as total_compras 
+                                FROM 
+                                    compras 
+                                GROUP BY 
+                                    dia_semana
+                                ORDER BY 
+                                    FIELD(dia_semana, 'L', 'M', 'M', 'J', 'V', 'S', 'D');");
+        $comrasDia = array();
+        while ($fila = $resultado->fetch_array()) {
+            $comrasDia[] = $fila;
+        }
+        echo json_encode($comrasDia);
+    });
 
-
+    $app->get("/ventas-mes/total", function() use($db, $app) {
+        header("Content-type: application/json; charset=utf-8");
+        $resultado = $db->query("SELECT 
+                                    CASE MONTH(fecha)
+                                        WHEN 1 THEN 'Ene'
+                                        WHEN 2 THEN 'Feb'
+                                        WHEN 3 THEN 'Mar'
+                                        WHEN 4 THEN 'Abr'
+                                        WHEN 5 THEN 'May'
+                                        WHEN 6 THEN 'Jun'
+                                        WHEN 7 THEN 'Jul'
+                                        WHEN 8 THEN 'Ago'
+                                        WHEN 9 THEN 'Sep'
+                                        WHEN 10 THEN 'Oct'
+                                        WHEN 11 THEN 'Nov'
+                                        WHEN 12 THEN 'Dec'
+                                    END as mes, 
+                                    SUM(valor_total) as total_ventas 
+                                FROM 
+                                    ventas 
+                                WHERE 
+                                    YEAR(fecha) = YEAR(CURDATE())
+                                GROUP BY 
+                                    MONTH(fecha)
+                                ORDER BY 
+                                    MONTH(fecha);");
+        $ventasMes = array();
+        while ($fila = $resultado->fetch_array()) {
+            $ventasMes[] = $fila;
+        }
+        echo json_encode($ventasMes);
+    });
 
     $app->get("/dosimetria",function() use($db,$app){
         header("Content-type: application/json; charset=utf-8");

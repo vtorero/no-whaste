@@ -6,8 +6,8 @@ import {Global} from 'app/global';
   providedIn: 'root',
 })
 export class InventarioService {
-  private apiUrl = Global.BASE_API_URL + '/api.php/mermas/total';
-  private apiMermasSemana = Global.BASE_API_URL + '/api.php/merma-semana/total';
+  private apiUrl = Global.BASE_API_URL + 'api.php/mermas/total';
+  private apiMermasSemana = Global.BASE_API_URL + 'api.php/merma-semana/total';
 
   constructor(private http: HttpClient) {}
 
