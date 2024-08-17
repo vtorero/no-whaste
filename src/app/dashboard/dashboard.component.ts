@@ -53,8 +53,7 @@ export class DashboardComponent implements OnInit {
 
   initDailyPurchasesChart() {
     this.comprasService.getComprasPorDia().subscribe((data) => {
-      console.log(data); // Log the data to check if it's correct
-      const labels = data.map((item) => item.dia_semana); // Assuming 'L', 'M', etc.
+      const labels = data.map((item) => item.dia_semana);
       const series = data.map((item) => item.total_compras);
 
       const dataDailyPurchasesChart: any = {
@@ -67,7 +66,7 @@ export class DashboardComponent implements OnInit {
           tension: 0,
         }),
         low: 0,
-        high: Math.max(...series) + 10, // Adjust the high value based on your data
+        high: Math.max(...series) + 10,
         chartPadding: {top: 0, right: 0, bottom: 0, left: 0},
       };
 
@@ -83,10 +82,9 @@ export class DashboardComponent implements OnInit {
 
   initHourlyPurchasesChart() {
     this.comprasService.getComprasPorHora().subscribe((data) => {
-      console.log('Hourly Purchases Data:', data); // Log the data received from the API
       if (!data || !data.labels || !data.series || !data.series[0]) {
         console.error('Data is missing or incomplete', data);
-        return; // Exit early if data is not as expected
+        return;
       }
 
       const labels = data.labels;
@@ -118,7 +116,7 @@ export class DashboardComponent implements OnInit {
 
   initYearlySalesChart() {
     this.ventasService.getVentasPorMes().subscribe((data) => {
-      const labels = data.map((item) => item.mes); // 'Ene', 'Feb', etc.
+      const labels = data.map((item) => item.mes);
       const series = data.map((item) => item.total_ventas);
 
       const dataYearlySalesChart = {
@@ -131,13 +129,13 @@ export class DashboardComponent implements OnInit {
           showGrid: false,
         },
         axisY: {
-          onlyInteger: true, // Ensure only integer values are displayed
+          onlyInteger: true,
           labelInterpolationFnc: function (value) {
             return value > 0 ? value : '';
           },
         },
         low: 0,
-        high: Math.max(...series) + 100, // Adjust to match your data
+        high: Math.max(...series) + 100,
         chartPadding: {top: 0, right: 0, bottom: 0, left: 20},
       };
 
