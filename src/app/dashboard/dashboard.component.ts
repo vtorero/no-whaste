@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
 import {VentasService} from './services/ventas.service';
-import { InventarioService } from './services/inventario.service';
-import { ComprasService } from './services/compras.service';
-import * as Chartist from 'chartist';
+import {InventarioService} from './services/inventario.service';
+import {ComprasService} from './services/compras.service';
+import Chartist from 'chartist';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,14 +10,18 @@ import * as Chartist from 'chartist';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-  totalVentas: string; // Cambia totalVentas$ a totalVentas para almacenar el valor desuscrito
+  totalVentas: string;
   totalOfertas: string;
   totalVentasSemana: string;
   totalMermas: string;
   totalMermasSemana: string;
   totalDemanda: string;
 
-  constructor(private ventasService: VentasService,private comprasService: ComprasService,private inventarioService: InventarioService) {}
+  constructor(
+    private ventasService: VentasService,
+    private comprasService: ComprasService,
+    private inventarioService: InventarioService
+  ) {}
 
   ngOnInit() {
     this.ventasService.getTotalVentas().subscribe((data) => {
@@ -43,96 +46,124 @@ export class DashboardComponent implements OnInit {
   }
 
   initializeCharts() {
-    this.initDailySalesChart();
-    this.initCompletedTasksChart();
-    this.initWebsiteViewsChart();
+    this.initDailyPurchasesChart();
+    this.initHourlyPurchasesChart();
+    this.initYearlySalesChart();
   }
 
-  initDailySalesChart() {
-    const dataDailySalesChart: any = {
-      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-      series: [[12, 17, 7, 17, 23, 18, 38]],
-    };
+  initDailyPurchasesChart() {
+    this.comprasService.getComprasPorDia().subscribe((data) => {
+      console.log(data); // Log the data to check if it's correct
+      const labels = data.map((item) => item.dia_semana); // Assuming 'L', 'M', etc.
+      const series = data.map((item) => item.total_compras);
 
-    const optionsDailySalesChart: any = {
-      lineSmooth: Chartist.Interpolation.cardinal({
-        tension: 0,
-      }),
-      low: 0,
-      high: 50,
-      chartPadding: {top: 0, right: 0, bottom: 0, left: 0},
-    };
+      const dataDailyPurchasesChart: any = {
+        labels: labels,
+        series: [series],
+      };
 
-    var dailySalesChart = new Chartist.Line(
-      '#dailySalesChart',
-      dataDailySalesChart,
-      optionsDailySalesChart
-    );
+      const optionsDailyPurchasesChart: any = {
+        lineSmooth: Chartist.Interpolation.cardinal({
+          tension: 0,
+        }),
+        low: 0,
+        high: Math.max(...series) + 10, // Adjust the high value based on your data
+        chartPadding: {top: 0, right: 0, bottom: 0, left: 0},
+      };
 
-    this.startAnimationForLineChart(dailySalesChart);
+      const dailyPurchasesChart = new Chartist.Line(
+        '#dailyPurchasesChart',
+        dataDailyPurchasesChart,
+        optionsDailyPurchasesChart
+      );
+
+      this.startAnimationForLineChart(dailyPurchasesChart);
+    });
   }
 
-  initCompletedTasksChart() {
-    const dataCompletedTasksChart: any = {
-      labels: ['12p', '3p', '6p', '9p', '12p', '3a', '6a', '9a'],
-      series: [[230, 750, 450, 300, 280, 240, 200, 190]],
-    };
+  initHourlyPurchasesChart() {
+    this.comprasService.getComprasPorHora().subscribe((data) => {
+      console.log('Hourly Purchases Data:', data); // Log the data received from the API
+      if (!data || !data.labels || !data.series || !data.series[0]) {
+        console.error('Data is missing or incomplete', data);
+        return; // Exit early if data is not as expected
+      }
 
-    const optionsCompletedTasksChart: any = {
-      lineSmooth: Chartist.Interpolation.cardinal({
-        tension: 0,
-      }),
-      low: 0,
-      high: 1000,
-      chartPadding: {top: 0, right: 0, bottom: 0, left: 0},
-    };
+      const labels = data.labels;
+      const series = data.series[0];
 
-    var completedTasksChart = new Chartist.Line(
-      '#completedTasksChart',
-      dataCompletedTasksChart,
-      optionsCompletedTasksChart
-    );
+      const dataHourlyPurchasesChart: any = {
+        labels: labels,
+        series: [series],
+      };
 
-    this.startAnimationForLineChart(completedTasksChart);
+      const optionsHourlyPurchasesChart: any = {
+        lineSmooth: Chartist.Interpolation.cardinal({
+          tension: 0,
+        }),
+        low: 0,
+        high: Math.max(...series) + 10,
+        chartPadding: {top: 0, right: 0, bottom: 0, left: 0},
+      };
+
+      const hourlyPurchasesChart = new Chartist.Line(
+        '#hourlyPurchasesChart',
+        dataHourlyPurchasesChart,
+        optionsHourlyPurchasesChart
+      );
+
+      this.startAnimationForLineChart(hourlyPurchasesChart);
+    });
   }
 
-  initWebsiteViewsChart() {
-    var datawebsiteViewsChart = {
-      labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      series: [[542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]],
-    };
+  initYearlySalesChart() {
+    this.ventasService.getVentasPorMes().subscribe((data) => {
+      const labels = data.map((item) => item.mes); // 'Ene', 'Feb', etc.
+      const series = data.map((item) => item.total_ventas);
 
-    var optionswebsiteViewsChart = {
-      axisX: {
-        showGrid: false,
-      },
-      low: 0,
-      high: 1000,
-      chartPadding: {top: 0, right: 5, bottom: 0, left: 0},
-    };
+      const dataYearlySalesChart = {
+        labels: labels,
+        series: [series],
+      };
 
-    var responsiveOptions: any[] = [
-      [
-        'screen and (max-width: 640px)',
-        {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function (value) {
-              return value[0];
-            },
+      const optionsYearlySalesChart = {
+        axisX: {
+          showGrid: false,
+        },
+        axisY: {
+          onlyInteger: true, // Ensure only integer values are displayed
+          labelInterpolationFnc: function (value) {
+            return value > 0 ? value : '';
           },
         },
-      ],
-    ];
+        low: 0,
+        high: Math.max(...series) + 100, // Adjust to match your data
+        chartPadding: {top: 0, right: 0, bottom: 0, left: 20},
+      };
 
-    var websiteViewsChart = new Chartist.Bar(
-      '#websiteViewsChart',
-      datawebsiteViewsChart,
-      optionswebsiteViewsChart,
-      responsiveOptions
-    );
+      const responsiveOptions: any[] = [
+        [
+          'screen and (max-width: 640px)',
+          {
+            seriesBarDistance: 5,
+            axisX: {
+              labelInterpolationFnc: function (value: any[]) {
+                return value[0];
+              },
+            },
+          },
+        ],
+      ];
 
-    this.startAnimationForBarChart(websiteViewsChart);
+      const yearlySalesChart = new Chartist.Bar(
+        '#yearlySalesChart',
+        dataYearlySalesChart,
+        optionsYearlySalesChart,
+        responsiveOptions
+      );
+
+      this.startAnimationForBarChart(yearlySalesChart);
+    });
   }
 
   startAnimationForLineChart(chart) {
