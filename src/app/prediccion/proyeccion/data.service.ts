@@ -6,9 +6,10 @@ import {Global} from 'app/global';
   providedIn: 'root',
 })
 export class DataService {
+  private urlData = Global.BASE_API_URL + 'data.php/api';
   constructor(private http: HttpClient) {}
 
   fetchData(): Observable<any> {
-    return this.http.get(`${Global.BASE_API_URL}/data.php/api`);
+    return this.http.get(this.urlData);
   }
 }

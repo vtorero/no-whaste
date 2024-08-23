@@ -9,6 +9,6 @@ export class DataService {
   constructor(private http: HttpClient) {}
 
   fetchData(): Observable<any> {
-    return this.http.get(`${Global.BASE_API_URL}/data.php/api`);
+    return this.http.get(Global.BASE_API_URL + 'data.php/api');
   }
 }
