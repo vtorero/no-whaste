@@ -109,6 +109,17 @@ export class NavbarComponent implements OnInit {
         }
     };
 
+cerrar(){
+    console.log('cerrar')
+    localStorage.removeItem('currentId');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentNombre');
+    localStorage.removeItem('currentAvatar');
+    localStorage.removeItem('currentEmpresa');
+    this.router.navigate(['/login']);
+
+}
+
     getTitle(){
       var titlee = this.location.prepareExternalUrl(this.location.path());
       if(titlee.charAt(0) === '#'){

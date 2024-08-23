@@ -31,27 +31,20 @@ public error_user:boolean;
   }
 
 ingresar(){
-console.log(this.form)
+//console.log(this.form)
 const usuario = this.form.value.usuario;
 const password = this.form.value.password;
 this.loginUser(usuario,password);
-if(usuario=='admin' && password=='123'){
-this.fakeLoading()
-
-}else{
-this.error();
-this.form.reset()
-
-}
+//if(usuario=='admin' && password=='123'){
+//this.fakeLoading()
 }
 
 loginUser(usuario,password){
   event.preventDefault();
-
   if(usuario){
         this.api.loginUser(usuario,password).subscribe(data=>{
           if(data['rows']==1) {
-            console.log(data['data'][0]);
+            console.log(data['rows']);
             localStorage.removeItem("currentId");
             localStorage.removeItem("currentUser");
             localStorage.removeItem("currentNombre");
@@ -64,11 +57,14 @@ loginUser(usuario,password){
             localStorage.setItem("currentAvatar",data['data'][0]['avatar']);
             localStorage.setItem("currentEmpresa",data['data'][0]['nombre']);
             sessionStorage.setItem("hashsession",data['data'][0]['hash']);
-            this.router.navigate(['dash/reportes']);
+            this._router.navigate(['dashboard'])
+            //this.router.navigate(['dash/reportes']);
 
           }else{
+
             this.error_user = true;
-            //console.log(this.error_user)
+            this.error();
+            console.log(this.error_user)
           }
 
         });
