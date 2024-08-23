@@ -39,7 +39,7 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
   async fetchDataFromAPI(): Promise<void> {
     try {
       const response = await this.http
-        .get(`${Global.BASE_API_URL}/data.php/api`)
+        .get(Global.BASE_API_URL + 'data.php/api')
         .toPromise();
       this.data = response;
 
