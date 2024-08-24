@@ -24,7 +24,8 @@ if ($db->connect_errno) {
 }
 
 // Feature engineering and dynamic adjustments
-function generateSeasonalIndex() {
+function generateSeasonalIndex()
+{
     $currentMonth = date('n');
     $seasonalMonths = [];
 
@@ -39,52 +40,122 @@ function generateSeasonalIndex() {
 }
 
 
-function generatePromotionalEffect() {
+function generateRandomTime()
+{
+    $hour = str_pad(rand(0, 23), 2, '0', STR_PAD_LEFT);
+    $minute = str_pad(rand(0, 59), 2, '0', STR_PAD_LEFT);
+    $second = str_pad(rand(0, 59), 2, '0', STR_PAD_LEFT);
+    return "$hour:$minute:$second";
+}
+
+function generatePromotionalEffect()
+{
     // Random promotional effect, with 0.95 meaning a discount period
     return rand(95, 105) / 100;
 }
 
-function normalize($value, $min, $max) {
+function normalize($value, $min, $max)
+{
     return ($value - $min) / ($max - $min);
 }
 
-function insertCompras($db) {
+function insertCompras($db)
+{
     $comprasData = [
         ['Factura', 'F001-15', 'Carne de cerdo', 1],
         ['Factura', 'F001-14', 'Insumos Preparación', 21],
         // Add more rows as needed
     ];
     $today = date('Y-m-d');
+
     foreach ($comprasData as $index => $compra) {
-        $num_comprobante = $compra[1] . ($index + rand(10,99));
+        $num_comprobante = $compra[1] . ($index + rand(10, 99));
         $descripcion = $compra[2];
         $id_proveedor = $compra[3];
-        $query = "INSERT INTO `compras` (`comprobante`, `num_comprobante`, `descripcion`, `fecha`, `id_proveedor`, `id_usuario`, `fecha_registro`) VALUES
-        ('{$compra[0]}', '{$num_comprobante}', '{$descripcion}', '{$today}', {$id_proveedor}, 1, '{$today} 00:00:00')";
-        $db->query($query);
+        $randomTime = generateRandomTime();
+        $fechaRegistro = "{$today} {$randomTime}";
+
+        // Insertar en la tabla compras
+        $queryCompra = "INSERT INTO `compras` (`comprobante`, `num_comprobante`, `descripcion`, `fecha`, `id_proveedor`, `id_usuario`, `fecha_registro`) VALUES
+        ('{$compra[0]}', '{$num_comprobante}', '{$descripcion}', '{$today}', {$id_proveedor}, 1, '{$fechaRegistro}')";
+        $db->query($queryCompra);
+
+        // Obtener el ID de la compra recién insertada
+        $idCompra = $db->insert_id;
+
+        // Inserción en detalle_compra
+        insertDetalleCompra($db, $idCompra);
     }
 }
 
-function insertVentas($db) {
-    $ventasData = [
-        [1, 1, 1, 1, 0.18, 1.80, 10.00],
-        [1, 1, 41, 25.41, 0.18, 4.57, 29.98],
+function insertDetalleCompra($db, $idCompra)
+{
+    $detalleCompraData = [
+        ['Carne de cerdo', 500.00, 1050.50, 12], // Montos grandes como solicitado
+        ['Insumos Preparación', 1000.00, 1575.75, 104],
         // Add more rows as needed
     ];
+
     $today = date('Y-m-d');
-    foreach ($ventasData as $index => $venta) {
-        $valor_total = $venta[6] * generateSeasonalIndex() * generatePromotionalEffect();
-        $monto_igv = $venta[5];
-        $valor_neto = $venta[4];
-        $igv = $venta[3];
-        $nro_comprobante = 'F001-' . ($index + 1);
-        $query = "INSERT INTO `ventas` (`id_usuario`, `id_vendedor`, `id_cliente`, `igv`, `monto_igv`, `valor_neto`, `valor_total`, `formaPago`, `fechaPago`, `estado`, `comprobante`, `nro_comprobante`, `tipoDoc`, `observacion`, `fecha`, `fecha_registro`) VALUES
-        (1, 1, 1, {$igv}, {$monto_igv}, {$valor_neto}, {$valor_total}, 'Contado', NULL, '3', 'Factura', '{$nro_comprobante}', '2', '', '{$today} 00:00:00', '{$today} 00:00:00')";
-        $db->query($query);
+
+    foreach ($detalleCompraData as $detalleCompra) {
+        $randomTime = generateRandomTime();
+        $fechaRegistro = "{$today} {$randomTime}";
+
+        $queryDetalle = "INSERT INTO `detalle_compra` (`descripcion`, `cantidad`, `precio`, `id_articulo`, `id_compra`, `fecha_registro`) VALUES
+        ('{$detalleCompra[0]}', {$detalleCompra[1]}, {$detalleCompra[2]}, {$detalleCompra[3]}, {$idCompra}, '{$fechaRegistro}')";
+
+        $db->query($queryDetalle);
     }
 }
 
-function insertInventario($db) {
+
+
+function insertVentas($db)
+{
+    $ventasData = [
+        [1, 1, 1, 0.18, 180.00, 1000.00],
+        [1, 1, 41, 0.18, 457.00, 2498.90],
+        // Add more rows as needed
+    ];
+
+    $ventaDetallesData = [
+        [55, 1, 'KGM', 100.0000, 0.0000, 1000.0000],
+        [32, 9, 'NIU', 30.0000, 0.0000, 847.0000],
+        // Add more rows as needed
+    ];
+
+    $today = date('Y-m-d');
+
+    foreach ($ventasData as $index => $venta) {
+        $valor_total = $venta[5] * generateSeasonalIndex() * generatePromotionalEffect();
+        $monto_igv = $venta[4];
+        $valor_neto = $venta[3];
+        $igv = $venta[2];
+        $nro_comprobante = 'F001-' . ($index + 1);
+        $randomTime = generateRandomTime();
+        $fechaRegistro = "{$today} {$randomTime}";
+
+        // Insert into ventas
+        $query = "INSERT INTO `ventas` (`id_usuario`, `id_vendedor`, `id_cliente`, `igv`, `monto_igv`, `valor_neto`, `valor_total`, `formaPago`, `fechaPago`, `estado`, `comprobante`, `nro_comprobante`, `tipoDoc`, `observacion`, `fecha`, `fecha_registro`) VALUES
+        (1, 1, {$venta[2]}, {$igv}, {$monto_igv}, {$valor_neto}, {$valor_total}, 'Contado', NULL, '3', 'Factura', '{$nro_comprobante}', '2', '', '{$fechaRegistro}', '{$fechaRegistro}')";
+        $db->query($query);
+
+        // Get the last inserted id for the ventas table
+        $id_venta = $db->insert_id;
+
+        // Insert into venta_detalle for each venta
+        foreach ($ventaDetallesData as $detalleIndex => $detalle) {
+            $queryDetalle = "INSERT INTO `venta_detalle` (`id_venta`, `id_producto`, `id_inventario`, `unidad_medida`, `cantidad`, `peso`, `precio`, `descuento`, `subtotal`, `fecha_registro`) VALUES
+            ({$id_venta}, {$detalle[0]}, {$detalle[1]}, '{$detalle[2]}', {$detalle[3]}, {$detalle[4]}, {$detalle[5]}, NULL, {$detalle[5]}, '{$fechaRegistro}')";
+            $db->query($queryDetalle);
+        }
+    }
+}
+
+
+function insertInventario($db)
+{
     $inventarioData = [
         [12, 'bolsa', 'NIU', 33000],
         [104, 'bolsa', 'NIU', 3000],
@@ -92,22 +163,22 @@ function insertInventario($db) {
     ];
     $today = date('Y-m-d');
     $nextMonth = date('Y-m-d', strtotime("+1 month"));
-    
-    // Wastage (merma) range based on provided data
+
     $minMerma = 0.60;
     $maxMerma = 100.00;
-    
+
     foreach ($inventarioData as $index => $item) {
         $merma = rand($minMerma * 100, $maxMerma * 100) / 100.0;
         $merma = normalize($merma, $minMerma, $maxMerma); // Normalizing the merma
-
+        $randomTime = generateRandomTime();
+        $fechaRegistro = "{$today} {$randomTime}";
         $query = "INSERT INTO `inventario` (`id_producto`, `presentacion`, `unidad`, `granel`, `cantidad`, `peso`, `merma`, `fecha_produccion`, `fecha_vencimiento`, `estado`, `ciclo`, `id_usuario`, `fecha_registro`) VALUES
-        ({$item[0]}, '{$item[1]}', '{$item[2]}', '0.00', '{$item[3]}', '0.00', '{$merma}', '{$today}', '{$nextMonth}', '1', 2, 1, '{$today} 00:00:00')";
+        ({$item[0]}, '{$item[1]}', '{$item[2]}', '0.00', '{$item[3]}', '0.00', '{$merma}', '{$fechaRegistro}', '{$nextMonth}', '1', 2, 1, '{$fechaRegistro}')";
         $db->query($query);
     }
 }
 
-$app->get('/data/api', function() use ($app, $db) {
+$app->get('/data/api', function () use ($app, $db) {
     insertCompras($db);
     insertVentas($db);
     insertInventario($db);
