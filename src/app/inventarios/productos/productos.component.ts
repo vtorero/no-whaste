@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'app/api.service';
+import { AddProductoComponent } from 'app/dialog/add-producto/add-producto.component';
 import { OpenDialogComponent } from 'app/dialog/open-dialog/open-dialog.component';
 import { Usuario } from 'app/modelos/usuario';
 
@@ -76,7 +77,7 @@ openBusqueda(){
 
   openDialogEdit(enterAnimationDuration: string, exitAnimationDuration: string): void {
     if(this.selectedRowIndex){
-    const dialog= this.dialog.open(OpenDialogComponent, {
+    const dialog= this.dialog.open(AddProductoComponent, {
       width: '400px',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -117,13 +118,13 @@ openBusqueda(){
 
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    const dialogo1 =this.dialog.open(OpenDialogComponent, {
-      width: '400px',
+    const dialogo1 =this.dialog.open(AddProductoComponent, {
+      width: '680px',
       enterAnimationDuration,
       exitAnimationDuration,
       data: {
-        clase:'Usuario',
-        usuario:this.selectedRowIndex
+        clase:'Producto',
+        producto:this.selectedRowIndex
       },
     });
     dialogo1.afterClosed().subscribe(us => {

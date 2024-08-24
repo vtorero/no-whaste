@@ -45,6 +45,7 @@ import { MermasComponent } from './prediccion/mermas/mermas.component';
 import { ReduccionComponent } from './prediccion/reduccion/reduccion.component';
 import { EstrategiaComponent } from './prediccion/estrategia/estrategia.component';
 import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.component';
+import { AddProductoComponent } from './dialog/add-producto/add-producto.component';
 
 @NgModule({
   imports: [
@@ -97,6 +98,7 @@ import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.componen
     ReduccionComponent,
     EstrategiaComponent,
     ProyeccionComponent,
+    AddProductoComponent,
     
     
     ],

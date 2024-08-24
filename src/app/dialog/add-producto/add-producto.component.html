@@ -1,0 +1,48 @@
+<div>
+    <h1 mat-dialog-title>Agregar Producto</h1>
+    <div mat-dialog-content>
+        <div style="display: flex;flex-direction: column; margin:1rem auto; width: 600px; padding: 1rem;">
+            <div class="row">
+                <div class="col-3"> <mat-form-field>
+                    <input matInput [(ngModel)]="data.codigo" type="text" placeholder="código" required>
+                </mat-form-field></div>
+                <div class="col-9"> <mat-form-field>
+                    <input matInput [(ngModel)]="data.nombre" type="text" placeholder="Ingrese nombre" required>
+                </mat-form-field></div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="data.peso" type="text" placeholder="Ingrese el peso" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="data.costo" type="number" placeholder="S/.Ingrese costo" required>
+                        <input hidden [(ngModel)]="usuario" type="text">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">    <mat-form-field>
+                    <mat-label>Categoria</mat-label>
+                    <mat-select [(ngModel)]="data.id_categoria" (ngModelChange)="handleCagetoria(data.id_categoria)">
+                      <mat-option  *ngFor="let cat of dataSource" [value]="cat.id" >
+                        {{cat.nombre}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field></div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <mat-label>Subcategoria</mat-label>
+                        <mat-select [(ngModel)]="data.id_subcategoria">
+                          <mat-option  *ngFor="let cat of dataSubcategoria" [value]="cat.id" >
+                            {{cat.nombre}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="cancelar()">Cancelar</button>
+        <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Confirmar</button>
+    </div>
+    </div>

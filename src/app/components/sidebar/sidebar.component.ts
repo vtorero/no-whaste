@@ -36,7 +36,7 @@ export const ROUTES: RouteInfo[] = [
               {pat:'/productos/inventario', tit: 'Inventarios',  icn:'bubble_chart',cls:'library_books'}
             ]},
     { path: '/seguridad', title: 'Seguridad',  icon:'notifications', class: '' ,child:[{pat:'/usuarios', tit: 'Usuarios',  icn:'person',cls:'person'},
-    {pat:'/sucursales', tit: 'Sucursales',  icn:'person',cls:'person'}]}
+    ]}
 ];
 
 @Component({

@@ -127,6 +127,7 @@ openBusqueda(){
     });
     dialogo1.afterClosed().subscribe(us => {
       if (us!= undefined)
+      us.usuario=localStorage.getItem('currentId');
        this.agregar(us)
      });
 
