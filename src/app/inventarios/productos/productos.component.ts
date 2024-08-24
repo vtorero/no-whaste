@@ -10,6 +10,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'app/api.service';
 import { AddProductoComponent } from 'app/dialog/add-producto/add-producto.component';
 import { OpenDialogComponent } from 'app/dialog/open-dialog/open-dialog.component';
+import { Producto } from 'app/modelos/producto';
 import { Usuario } from 'app/modelos/usuario';
 
 @Component({
@@ -149,9 +150,9 @@ openBusqueda(){
 }
 
 
-  agregar(art:Usuario) {
+  agregar(art:Producto) {
     if(art){
-    this.api.guardarUsuario(art).subscribe(
+    this.api.GuardarProducto(art).subscribe(
       data=>{
         this._snackBar.open(data['messaje'],'OK',{duration:5000,horizontalPosition:'center',verticalPosition:'top'});
         },

@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiService } from 'app/api.service';
 import { Producto } from 'app/modelos/producto';
@@ -9,14 +10,25 @@ import { Producto } from 'app/modelos/producto';
   styleUrls: ['./add-producto.component.css']
 })
 export class AddProductoComponent {
+  form:FormGroup;
   dataSource;
   dataSubcategoria;
   isLoaded;
   usuario;
   constructor(
     public dialogRef: MatDialogRef<AddProductoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Producto,
-    private api:ApiService) {}
+    @Inject(MAT_DIALOG_DATA) public data: Producto,private fb:FormBuilder,
+    private api:ApiService) {
+      this.form=this.fb.group({
+        codigo:['',Validators.required],
+        nombre:['',Validators.required],
+        peso:['',Validators.required],
+        costo:['',Validators.required],
+        categoria:['',Validators.required],
+        subcategoria:['',Validators.required],
+        
+      });
+    }
 
     getCate(): void {
       this.api.getCategoriaSelect().subscribe(data => {
