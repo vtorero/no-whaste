@@ -100,7 +100,11 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
         $app->get("/oferta/total",function() use($db,$app){
             header("Content-type: application/json; charset=utf-8");
-            $resultado = $db->query("SELECT COUNT(valor_total) AS total_oferta_mes FROM ventas WHERE MONTH(fecha) = MONTH(CURRENT_DATE())  AND YEAR(fecha) = YEAR(CURRENT_DATE())AND DAY(fecha) <= DAY(CURRENT_DATE());");
+            $resultado = $db->query("SELECT COUNT(vd.id_producto) AS total_oferta_mes 
+                                        FROM ventas v
+                                        JOIN venta_detalle vd ON v.id = vd.id_venta
+                                        WHERE v.fecha >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01 00:00:00')
+                                        AND v.fecha < DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY);");
             $prods=array();
                 while ($fila = $resultado->fetch_array()) {
 
@@ -114,7 +118,11 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
             $app->get("/demanda/total",function() use($db,$app){
                 header("Content-type: application/json; charset=utf-8");
-                $resultado = $db->query("SELECT COUNT(*) AS total_demanda_mes FROM compras c WHERE MONTH(fecha) = MONTH(CURRENT_DATE()) AND YEAR(fecha) = YEAR(CURRENT_DATE()) AND DAY(fecha) <= DAY(CURRENT_DATE());");
+                $resultado = $db->query("SELECT  COUNT(c.id) AS total_demanda_mes 
+                                            FROM compras c
+                                            JOIN detalle_compras dc ON dc.id_compra = c.id  
+                                            WHERE c.fecha >= DATE_FORMAT(CURDATE(), '%Y-%m-01 00:00:00')
+                                            AND c.fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY);");
                 $prods=array();
                     while ($fila = $resultado->fetch_array()) {
 

@@ -123,37 +123,38 @@ $app->get("/api", function () use ($db, $app) {
 
     // Fetch other required data (waste, sales, demands, etc.)
     $query = "
-        SELECT case DATE_FORMAT(fecha, '%m')
-            when '01' then 'Verano'
-            when '02' then 'Verano'
-            when '03' then 'Verano'
-            when '04' then 'Otoño'
-            when '05' then 'Otoño'
-            when '06' then 'Otoño'
-            when '07' then 'Invierno'
-            when '08' then 'Invierno'
-            when '09' then 'Invierno'
-            when '10' then 'Primavera'
-            when '11' then 'Primavera'
-            when '12' then 'Primavera'
-            end as estacion,
-            case DATE_FORMAT(fecha, '%m')
-            when '01' then '1'
-            when '02' then '1'
-            when '03' then '1'
-            when '04' then '2'
-            when '05' then '2'
-            when '06' then '2'
-            when '07' then '3'
-            when '08' then '3'
-            when '09' then '3'
-            when '10' then '4'
-            when '11' then '4'
-            when '12' then '4'
-            end as cod_estacion,
-            DATE_FORMAT(fecha, '%y%m') mes, sum(valor_total) total 
+        SELECT CASE DATE_FORMAT(fecha, '%m')
+            WHEN '01' THEN 'Verano'
+            WHEN '02' THEN 'Verano'
+            WHEN '03' THEN 'Verano'
+            WHEN '04' THEN 'Otoño'
+            WHEN '05' THEN 'Otoño'
+            WHEN '06' THEN 'Otoño'
+            WHEN '07' THEN 'Invierno'
+            WHEN '08' THEN 'Invierno'
+            WHEN '09' THEN 'Invierno'
+            WHEN '10' THEN 'Primavera'
+            WHEN '11' THEN 'Primavera'
+            WHEN '12' THEN 'Primavera'
+            END AS estacion,
+            CASE DATE_FORMAT(fecha, '%m')
+            WHEN '01' THEN '1'
+            WHEN '02' THEN '1'
+            WHEN '03' THEN '1'
+            WHEN '04' THEN '2'
+            WHEN '05' THEN '2'
+            WHEN '06' THEN '2'
+            WHEN '07' THEN '3'
+            WHEN '08' THEN '3'
+            WHEN '09' THEN '3'
+            WHEN '10' THEN '4'
+            WHEN '11' THEN '4'
+            WHEN '12' THEN '4'
+            END AS cod_estacion,
+            DATE_FORMAT(fecha, '%y%m') mes, SUM(valor_total) total 
         FROM notas 
-        WHERE fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND CURDATE() 
+        WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+        AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
         GROUP BY estacion, cod_estacion, mes 
         ORDER BY mes ASC
     ";
@@ -171,22 +172,33 @@ $app->get("/api", function () use ($db, $app) {
     }
 
     $sales = [];
-    $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, sum(valor_total) total FROM ventas WHERE fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 4 MONTH) AND CURDATE()  GROUP BY mes ORDER BY mes ASC");
+    $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, SUM(valor_total) total 
+                            FROM ventas 
+                            WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                            AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+                            GROUP BY mes 
+                            ORDER BY mes ASC");
     while ($row = $result->fetch_array()) {
         $sales[] = (int) $row['total'];
     }
 
     $demand = [];
-    $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, count(id) total FROM ventas WHERE fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 4 MONTH) AND CURDATE()  GROUP BY mes ORDER BY mes ASC");
+    $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, COUNT(id) total 
+                            FROM compras  
+                            WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                            AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+                            GROUP BY mes 
+                            ORDER BY mes ASC");
     while ($row = $result->fetch_array()) {
         $demand[] = (int) $row['total'];
     }
 
     $offers = [];
-    $result = $db->query("SELECT DATE_FORMAT(v.fecha, '%Y-%m') AS mes, COUNT( vd.id_producto) AS total 
+    $result = $db->query("SELECT DATE_FORMAT(v.fecha, '%Y-%m') AS mes, COUNT(vd.id_producto) AS total 
                             FROM ventas v 
                             JOIN venta_detalle vd ON v.id = vd.id_venta 
-                            WHERE v.fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 4 MONTH) AND CURDATE()  
+                            WHERE v.fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                            AND v.fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
                             GROUP BY mes 
                             ORDER BY mes ASC");
     while ($row = $result->fetch_array()) {
