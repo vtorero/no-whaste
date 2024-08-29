@@ -31,6 +31,7 @@ import { MermasComponent } from 'app/prediccion/mermas/mermas.component';
 import { ReduccionComponent } from 'app/prediccion/reduccion/reduccion.component';
 import { EstrategiaComponent } from 'app/prediccion/estrategia/estrategia.component';
 import { ProyeccionComponent } from 'app/prediccion/proyeccion/proyeccion.component';
+import { ComprasComponent } from '../../compras/compras.component';
 
 export const AdminLayoutRoutes: Routes = [
     // {
@@ -88,6 +89,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ventas',          component: VentasComponent },
     {path:'productos/listado', component:ProductosComponent},
     {path:'productos/inventario', component:InventariosComponent},
+    {path:'productos/compras',component:ComprasComponent},
     {path:'productos',         component:HomeComponent},
     { path: 'seguridad',       component: UsuarioComponent },
     { path: 'usuarios',        component: UsuarioComponent },

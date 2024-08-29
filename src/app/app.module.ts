@@ -47,6 +47,7 @@ import { EstrategiaComponent } from './prediccion/estrategia/estrategia.componen
 import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.component';
 import { AddProductoComponent } from './dialog/add-producto/add-producto.component';
 import { AgregarInventarioComponent } from './dialog/agregar-inventario/agregar-inventario.component';
+import { ComprasComponent } from './compras/compras.component';
 
 
 @NgModule({
@@ -102,6 +103,7 @@ import { AgregarInventarioComponent } from './dialog/agregar-inventario/agregar-
     ProyeccionComponent,
     AddProductoComponent,
       AgregarInventarioComponent,
+      ComprasComponent,
 
 
     ],

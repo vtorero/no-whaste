@@ -33,7 +33,8 @@ export const ROUTES: RouteInfo[] = [
     ]},
     { path: '/productos', title: 'Productos',  icon:'library_books', class: '' ,
               child:[{pat:'/productos/listado', tit: 'Listado',  icn:'bubble_chart',cls:'library_books'},
-              {pat:'/productos/inventario', tit: 'Inventarios',  icn:'bubble_chart',cls:'library_books'}
+              {pat:'/productos/inventario', tit: 'Inventarios',  icn:'bubble_chart',cls:'library_books'},
+              {pat:'/productos/compras', tit: 'Compras',  icn:'bubble_chart',cls:'library_books'}
             ]},
     { path: '/seguridad', title: 'Seguridad',  icon:'notifications', class: '' ,child:[{pat:'/usuarios', tit: 'Usuarios',  icn:'person',cls:'person'},
     ]}
