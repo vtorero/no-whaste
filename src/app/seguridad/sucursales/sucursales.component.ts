@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'app/api.service';
 import { OpenDialogComponent } from 'app/dialog/open-dialog/open-dialog.component';
 import { Usuario } from 'app/modelos/usuario';
+import { AddSucursalComponent } from '../../dialog/add-sucursal/add-sucursal.component';
 
 @Component({
   selector: 'app-sucursales',
@@ -74,7 +75,7 @@ openBusqueda(){
 
   openDialogEdit(enterAnimationDuration: string, exitAnimationDuration: string): void {
     if(this.selectedRowIndex){
-    const dialog= this.dialog.open(OpenDialogComponent, {
+    const dialog= this.dialog.open(AddSucursalComponent, {
       width: '400px',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -115,7 +116,7 @@ openBusqueda(){
 
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    const dialogo1 =this.dialog.open(OpenDialogComponent, {
+    const dialogo1 =this.dialog.open(AddSucursalComponent, {
       width: '400px',
       enterAnimationDuration,
       exitAnimationDuration,

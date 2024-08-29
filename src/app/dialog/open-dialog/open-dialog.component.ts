@@ -4,9 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApiService } from 'app/api.service';
 import { Usuario } from '../../modelos/usuario';
 
-export interface DialogData {
-  animal: 'panda' | 'unicorn' | 'lion';
-}
+
 @Component({
   selector: 'app-open-dialog',
   templateUrl: './open-dialog.component.html',

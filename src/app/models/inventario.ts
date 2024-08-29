@@ -6,6 +6,7 @@ export class Inventario {
         public cantidad:number,
         public peso:number,
         public merma:number,
+        public clase:string,
         public estado:number,
         public ciclo:number,
         public id_usuario:number,
@@ -17,3 +18,4 @@ export class Inventario {
         public nombre:string
         ){}
 }
+

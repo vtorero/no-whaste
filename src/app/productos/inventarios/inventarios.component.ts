@@ -6,9 +6,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Add } from '@tensorflow/tfjs';
 import { ApiService } from 'app/api.service';
-import { OpenDialogComponent } from 'app/dialog/open-dialog/open-dialog.component';
 import { Inventario } from 'app/models/inventario';
+import { AgregarInventarioComponent } from '../../dialog/agregar-inventario/agregar-inventario.component';
 
 @Component({
   selector: 'app-inventarios',
@@ -76,8 +77,8 @@ openBusqueda(){
 
   openDialogEdit(enterAnimationDuration: string, exitAnimationDuration: string): void {
     if(this.selectedRowIndex){
-    const dialog= this.dialog.open(OpenDialogComponent, {
-      width: '400px',
+    const dialog= this.dialog.open(AgregarInventarioComponent, {
+      width: '800px',
       enterAnimationDuration,
       exitAnimationDuration,
       data: {
@@ -99,8 +100,8 @@ openBusqueda(){
   }
 
   openDelete(enterAnimationDuration: string, exitAnimationDuration: string){
-  const dialogo2=this.dialog.open(OpenDialogComponent, {
-    width: '400px',
+  const dialogo2=this.dialog.open(AgregarInventarioComponent, {
+    width: '800px',
     enterAnimationDuration,
     exitAnimationDuration,
     data: {
@@ -117,13 +118,13 @@ openBusqueda(){
 
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    const dialogo1 =this.dialog.open(OpenDialogComponent, {
-      width: '400px',
+    const dialogo1 =this.dialog.open(AgregarInventarioComponent, {
+      width: '800px',
       enterAnimationDuration,
       exitAnimationDuration,
       data: {
-        clase:'Usuario',
-        usuario:this.selectedRowIndex
+        clase:'Inventario',
+        id:this.selectedRowIndex
       },
     });
     dialogo1.afterClosed().subscribe(us => {

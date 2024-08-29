@@ -46,6 +46,8 @@ import { ReduccionComponent } from './prediccion/reduccion/reduccion.component';
 import { EstrategiaComponent } from './prediccion/estrategia/estrategia.component';
 import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.component';
 import { AddProductoComponent } from './dialog/add-producto/add-producto.component';
+import { AgregarInventarioComponent } from './dialog/agregar-inventario/agregar-inventario.component';
+
 
 @NgModule({
   imports: [
@@ -66,7 +68,7 @@ import { AddProductoComponent } from './dialog/add-producto/add-producto.compone
     MatFormFieldModule,
     BrowserModule,
     CommonModule,
-    
+
 
   ],
   declarations: [
@@ -99,8 +101,9 @@ import { AddProductoComponent } from './dialog/add-producto/add-producto.compone
     EstrategiaComponent,
     ProyeccionComponent,
     AddProductoComponent,
-    
-    
+      AgregarInventarioComponent,
+
+
     ],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorEspañol},{provide: MAT_DATE_LOCALE, useValue: 'pe-ES'}],
   bootstrap: [AppComponent]

@@ -17,7 +17,8 @@ export class AddProductoComponent {
   usuario;
   constructor(
     public dialogRef: MatDialogRef<AddProductoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Producto,private fb:FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: Producto,
+    private fb:FormBuilder,
     private api:ApiService) {
       this.form=this.fb.group({
         codigo:['',Validators.required],
@@ -26,7 +27,7 @@ export class AddProductoComponent {
         costo:['',Validators.required],
         categoria:['',Validators.required],
         subcategoria:['',Validators.required],
-        
+
       });
     }
 
@@ -49,7 +50,7 @@ export class AddProductoComponent {
 
     ngOnInit() {
       this.getCate();
-    
+
   }
     handleCagetoria(data){
       this.getSubCate(data);
