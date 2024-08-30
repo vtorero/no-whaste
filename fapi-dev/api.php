@@ -953,6 +953,7 @@ $app->get("/ventas",function() use($db,$app){
         echo  $respuesta;
 });
 
+
 $app->get("/inventarios/:id",function($id) use($db,$app){
     header("Content-type: application/json; charset=utf-8");
     $resultado = $db->query("SELECT i.id,p.codigo,id_producto,p.nombre,p.precio_sugerido precio,`presentacion`,`cantidad`,i.peso,i.unidad,DATE_FORMAT(fecha_produccion,'%Y-%m-%d')  fecha_produccion,datediff(now(),fecha_produccion) `dias`, `estado`, `ciclo`, `id_usuario` FROM `inventario` i, productos p where i.id_producto=p.id and id_producto={$id} and i.cantidad>0 order by fecha_produccion asc");

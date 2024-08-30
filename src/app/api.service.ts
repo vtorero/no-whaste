@@ -97,6 +97,13 @@ export class ApiService {
       .pipe(map((result) => result));
   }
 
+  
+  getCompras() {
+    return this._http
+      .get(Global.BASE_API_URL + "api.php/compras", { headers: this.headers })
+      .pipe(map((result) => result));
+  }
+
   getInventarios(id: string) {
     return this._http.get(Global.BASE_API_URL + 'reportes.php/' + id,
       { headers: this.headers }
