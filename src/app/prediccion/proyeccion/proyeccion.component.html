@@ -1,17 +1,19 @@
 <div class="container">
-  <h2>Sales Prediction</h2>
+  <h2>Proyección</h2>
 
   <!-- Dropdown to select the prediction range -->
   <div class="form-group">
-    <label for="predictionRange">Select Prediction Range (Months):</label>
+    <label for="predictionRange"
+      >Seleccione el Rango de Predicción (Meses):</label
+    >
     <select
       id="predictionRange"
       class="form-control"
       (change)="onPredictionRangeChange($event)"
     >
-      <option value="1">1 Month</option>
-      <option value="2">2 Months</option>
-      <option value="3" selected>3 Months</option>
+      <option value="1" selected>1 Mes</option>
+      <option value="2">2 Meses</option>
+      <option value="3">3 Meses</option>
     </select>
   </div>
 

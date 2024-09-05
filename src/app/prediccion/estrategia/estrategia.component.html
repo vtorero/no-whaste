@@ -1,32 +1,38 @@
 <div>
-  <h1>Strategies</h1>
+  <h1>Estrategias</h1>
   <div *ngIf="hasEffectiveStrategies" class="row">
     <div class="col-md-4" *ngFor="let strategy of strategies">
       <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Strategy: {{ strategy.name }}</h5>
+          <h5 class="card-title">Estrategia: {{ strategy.name }}</h5>
           <p class="card-text">
-            Improvement Percentage:
+            Porcentaje de Mejora:
             {{ strategy.improvementPercentage | number : '1.0-2' }}%
           </p>
-          <h6>Category:</h6>
+          <h6>Categoría:</h6>
           <p>
-            <span *ngFor="let cat of strategy.categories"
-              >{{ cat.nombre }}
+            <span *ngFor="let cat of strategy.categories">
+              {{ cat.nombre }}
             </span>
           </p>
-          <h6>Subcategories:</h6>
+          <h6>Subcategorías:</h6>
           <p>
-            <span *ngFor="let subCat of strategy.subCategories"
-              >{{ subCat.nombre }}
+            <span *ngFor="let subCat of strategy.subCategories">
+              {{ subCat.nombre }}
             </span>
           </p>
           <div *ngFor="let product of strategy.products">
-            <img [src]="product.imagen" alt="Product Image" class="img-fluid" />
+            <img
+              [src]="product.imagen"
+              alt="Imagen del Producto"
+              class="img-fluid"
+            />
           </div>
         </div>
       </div>
     </div>
   </div>
-  <p *ngIf="!hasEffectiveStrategies">No effective strategies available</p>
+  <p *ngIf="!hasEffectiveStrategies">
+    No hay estrategias efectivas disponibles
+  </p>
 </div>
