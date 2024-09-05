@@ -51,7 +51,7 @@ export class ReduccionComponent implements OnInit {
         labels: this.data.map((item) => item.mes),
         datasets: [
           {
-            label: 'Percentage difference from previous month',
+            label: 'Diferencia porcentual con el mes anterior',
             data: this.data.map((item, index, array) => {
               if (index === 0) {
                 return 0;
@@ -84,7 +84,7 @@ export class ReduccionComponent implements OnInit {
             type: 'category',
             title: {
               display: true,
-              text: 'Month',
+              text: 'Mes',
             },
             grid: {
               display: false,
@@ -93,7 +93,7 @@ export class ReduccionComponent implements OnInit {
           y: {
             title: {
               display: true,
-              text: 'Percentage Difference',
+              text: 'Diferencia Porcentual',
             },
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',

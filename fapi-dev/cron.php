@@ -102,12 +102,15 @@ function insertDetalleCompra($db, $idCompra)
         $randomTime = generateRandomTime();
         $fechaRegistro = "{$today} {$randomTime}";
 
-        $queryDetalle = "INSERT INTO `detalle_compra` (`descripcion`, `cantidad`, `precio`, `id_articulo`, `id_compra`, `fecha_registro`) VALUES
+        $queryDetalle = "INSERT INTO `detalle_compras` (`descripcion`, `cantidad`, `precio`, `id_articulo`, `id_compra`, `fecha_registro`) VALUES
         ('{$detalleCompra[0]}', {$detalleCompra[1]}, {$detalleCompra[2]}, {$detalleCompra[3]}, {$idCompra}, '{$fechaRegistro}')";
 
-        $db->query($queryDetalle);
+        if ($db->query($queryDetalle) === FALSE) {
+            echo "Error al insertar en detalle_compra: " . $db->error;
+        }
     }
 }
+
 
 
 
@@ -138,7 +141,7 @@ function insertVentas($db)
 
         // Insert into ventas
         $query = "INSERT INTO `ventas` (`id_usuario`, `id_vendedor`, `id_cliente`, `igv`, `monto_igv`, `valor_neto`, `valor_total`, `formaPago`, `fechaPago`, `estado`, `comprobante`, `nro_comprobante`, `tipoDoc`, `observacion`, `fecha`, `fecha_registro`) VALUES
-        (1, 1, {$venta[2]}, {$igv}, {$monto_igv}, {$valor_neto}, {$valor_total}, 'Contado', NULL, '3', 'Factura', '{$nro_comprobante}', '2', '', '{$fechaRegistro}', '{$fechaRegistro}')";
+        (1, 1, {$venta[2]}, {$igv}, {$monto_igv}, {$valor_neto}, {$valor_total}, 'Contado', NULL, '1', 'Factura', '{$nro_comprobante}', '2', '', '{$fechaRegistro}', '{$fechaRegistro}')";
         $db->query($query);
 
         // Get the last inserted id for the ventas table

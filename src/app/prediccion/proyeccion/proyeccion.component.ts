@@ -1,102 +1,79 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
+import {DataService} from './service/data.service';
 import * as tf from '@tensorflow/tfjs';
 import {Chart} from 'chart.js/auto';
-import {Global} from 'app/global';
+
 @Component({
   selector: 'app-proyeccion',
   templateUrl: './proyeccion.component.html',
   styleUrls: ['./proyeccion.component.css'],
 })
-export class ProyeccionComponent implements OnInit, AfterViewInit {
+export class ProyeccionComponent implements OnInit {
   @ViewChild('chartCanvas', {static: false}) chartRef: ElementRef | undefined;
   isLoading: boolean = true;
   chartInstance: any;
-  predictionRange: number = 3; // Predict the next 3 months by default
+  predictionRange: number = 1;
   data: any;
   predictedSales: number[] = [];
   futurePredictions: number[] = [];
+  predictedWaste: number[] = [];
+  futurePredictionsWaste: number[] = [];
   errorMessage: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.fetchDataFromAPI();
+    this.initPage();
   }
 
-  ngAfterViewInit(): void {
-    if (this.chartRef?.nativeElement && this.data) {
-      this.trainModel();
-    }
+  initPage(): void {
+    this.isLoading = true;
+    console.log('Iniciando la página y cargando datos...');
+    this.fetchDataFromService();
   }
 
-  async fetchDataFromAPI(): Promise<void> {
-    try {
-      const response = await this.http
-        .get(Global.BASE_API_URL + 'data.php/api')
-        .toPromise();
-      this.data = response;
+  fetchDataFromService(): void {
+    this.dataService.fetchData().subscribe(
+      (response) => {
+        this.data = response;
 
-      if (this.chartRef?.nativeElement) {
-        this.trainModel();
+        if (this.data && this.data.sales) {
+          this.trainModel();
+        } else {
+          this.errorMessage =
+            'No se encontraron datos válidos para mostrar el gráfico.';
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error fetching data from API:', error);
+        this.errorMessage =
+          'No se pudo cargar los datos desde la API. Por favor, inténtelo más tarde.';
+        this.isLoading = false;
       }
-    } catch (error) {
-      console.error('Error fetching data from API:', error);
-      this.errorMessage =
-        'Failed to load data from API. Please try again later.';
-    } finally {
-      this.isLoading = false;
-    }
+    );
   }
 
   async trainModel(): Promise<void> {
     try {
       const {sales, waste, demands, offers} = this.data;
-      // Ensure that all arrays have the same length and are not empty
-      if (
-        !sales ||
-        !waste ||
-        !demands ||
-        !offers ||
-        sales.length === 0 ||
-        sales.length !== waste.length ||
-        sales.length !== demands.length ||
-        sales.length !== offers.length
-      ) {
+
+      if (!sales || !waste || !demands || !offers || sales.length === 0) {
         throw new Error(
-          'Data arrays must be of the same length and non-empty.'
+          'Data arrays must be non-empty and have the same length.'
         );
       }
 
-      // Filter out any undefined, null, or non-numerical entries
-      const validEntries = sales.every(
-        (v, i) =>
-          typeof v === 'number' &&
-          typeof waste[i] === 'number' &&
-          typeof demands[i] === 'number' &&
-          typeof offers[i] === 'number'
-      );
-
-      if (!validEntries) {
-        throw new Error('All entries must be valid numbers.');
-      }
-
-      // Prepare input data for model training
+      // Preparar los datos de entrada para las ventas y mermas
       const inputs = sales.map((_, i: number) => [
         sales[i],
         waste[i],
         demands[i],
         offers[i],
       ]);
-      const outputs = sales.slice(1); // Predict the next month's sales, so skip the first one
+      const outputs = sales.slice(1);
 
-      const inputTensor = tf.tensor2d(inputs.slice(0, -1)); // Remove the last item for input
+      const inputTensor = tf.tensor2d(inputs.slice(0, -1));
       const outputTensor = tf.tensor2d(outputs, [outputs.length, 1]);
 
       const model = tf.sequential();
@@ -107,79 +84,130 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
       model.add(tf.layers.dense({units: 1}));
       model.compile({loss: 'meanSquaredError', optimizer: 'adam'});
 
-      await model.fit(inputTensor, outputTensor, {epochs: 100});
+      await model.fit(inputTensor, outputTensor, {epochs: 200});
 
-      // Predicting the sales for the actual data
       const predictions = model.predict(inputTensor);
 
       let predictionsSales: Float32Array;
       if (Array.isArray(predictions)) {
-        predictionsSales = predictions[0].dataSync() as Float32Array; // Handle array of tensors
+        predictionsSales = predictions[0].dataSync() as Float32Array;
       } else {
-        predictionsSales = predictions.dataSync() as Float32Array; // Handle single tensor
+        predictionsSales = predictions.dataSync() as Float32Array;
       }
 
       const lastSalesInput = inputs[inputs.length - 1];
       const futureInputs = Array.from(
         {length: this.predictionRange},
         (_, i) => [
-          lastSalesInput[0] + i * 50, // Simulate future sales
-          lastSalesInput[1] + i * 5, // Simulate future waste
-          lastSalesInput[2] + i * 60, // Simulate future demand
-          lastSalesInput[3] + i * 40, // Simulate future offer
+          lastSalesInput[0] + i * 50,
+          lastSalesInput[1] + i * 5,
+          lastSalesInput[2] + i * 60,
+          lastSalesInput[3] + i * 40,
         ]
       );
 
       const futureInputTensor = tf.tensor2d(futureInputs);
       const futurePredictions = model.predict(futureInputTensor);
 
-      let futurePredictionsData: Float32Array;
+      let futurePredictionsSales: Float32Array;
       if (Array.isArray(futurePredictions)) {
-        futurePredictionsData = futurePredictions[0].dataSync() as Float32Array; // Handle array of tensors
+        futurePredictionsSales =
+          futurePredictions[0].dataSync() as Float32Array;
       } else {
-        futurePredictionsData = futurePredictions.dataSync() as Float32Array; // Handle single tensor
+        futurePredictionsSales = futurePredictions.dataSync() as Float32Array;
       }
 
-      this.predictedSales = Array.from(predictionsSales);
-      this.futurePredictions = Array.from(futurePredictionsData);
+      const outputsWaste = waste.slice(1);
+      const outputTensorWaste = tf.tensor2d(outputsWaste, [
+        outputsWaste.length,
+        1,
+      ]);
 
-      this.renderChart(sales, this.predictedSales, this.futurePredictions);
+      await model.fit(inputTensor, outputTensorWaste, {epochs: 200});
+
+      const predictionsWaste = model.predict(inputTensor);
+
+      let predictionsWasteArray: Float32Array;
+      if (Array.isArray(predictionsWaste)) {
+        predictionsWasteArray = predictionsWaste[0].dataSync() as Float32Array;
+      } else {
+        predictionsWasteArray = predictionsWaste.dataSync() as Float32Array;
+      }
+
+      const futurePredictionsWaste = model.predict(futureInputTensor);
+
+      let futurePredictionsWasteArray: Float32Array;
+      if (Array.isArray(futurePredictionsWaste)) {
+        futurePredictionsWasteArray =
+          futurePredictionsWaste[0].dataSync() as Float32Array;
+      } else {
+        futurePredictionsWasteArray =
+          futurePredictionsWaste.dataSync() as Float32Array;
+      }
+
+      // Guardar las predicciones
+      this.predictedSales = Array.from(predictionsSales);
+      this.futurePredictions = Array.from(futurePredictionsSales);
+      this.predictedWaste = Array.from(predictionsWasteArray);
+      this.futurePredictionsWaste = Array.from(futurePredictionsWasteArray);
+
+      this.renderChart(
+        sales,
+        this.predictedSales,
+        this.futurePredictions,
+        waste,
+        this.predictedWaste,
+        this.futurePredictionsWaste
+      );
     } catch (error) {
       console.error('Error during model training:', error);
-      this.errorMessage =
-        'Failed to train the model. Please check the data and try again.';
-    } finally {
-      this.isLoading = false;
+      this.errorMessage = 'Hubo un error al entrenar el modelo.';
     }
   }
 
   renderChart(
     actualSales: number[],
     predictedSales: number[],
-    futurePredictions: number[]
+    futurePredictions: number[],
+    actualWaste: number[],
+    predictedWaste: number[],
+    futurePredictionsWaste: number[]
   ): void {
     if (!this.chartRef?.nativeElement) {
-      console.error('Chart element not found.');
+      console.error('No se encontró el elemento del gráfico.');
       return;
     }
 
     const chartData = {
       labels: [
         ...Array(actualSales.length).fill('Actual'),
-        ...Array(this.predictionRange).fill('Future'),
+        ...Array(this.predictionRange).fill('Futuro'),
       ],
       datasets: [
         {
-          label: 'Actual Sales',
+          label: 'Ventas Actuales',
           data: actualSales,
           borderColor: 'blue',
           fill: false,
         },
         {
-          label: 'Predicted Sales',
+          label: 'Ventas Predecidas',
           data: [...predictedSales, ...futurePredictions],
           borderColor: 'lightblue',
           fill: false,
+        },
+        {
+          label: 'Mermas Actuales',
+          data: actualWaste,
+          borderColor: 'red',
+          fill: false,
+        },
+        {
+          label: 'Mermas Predecidas',
+          data: [...predictedWaste, ...futurePredictionsWaste],
+          borderColor: 'orange',
+          fill: false,
+          borderDash: [5, 5],
         },
       ],
     };
@@ -199,13 +227,13 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
             type: 'category',
             title: {
               display: true,
-              text: 'Month',
+              text: 'Mes',
             },
           },
           y: {
             title: {
               display: true,
-              text: 'Sales',
+              text: 'Ventas y Mermas',
             },
           },
         },
@@ -215,7 +243,7 @@ export class ProyeccionComponent implements OnInit, AfterViewInit {
 
   onPredictionRangeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    this.predictionRange = +target.value; // Convert to number
-    this.trainModel(); // Retrain the model with the new prediction range
+    this.predictionRange = +target.value;
+    this.trainModel();
   }
 }
