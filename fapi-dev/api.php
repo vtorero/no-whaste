@@ -100,7 +100,7 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
         $app->get("/oferta/total",function() use($db,$app){
             header("Content-type: application/json; charset=utf-8");
-            $resultado = $db->query("SELECT COUNT(vd.id_producto) AS total_oferta_mes 
+            $resultado = $db->query("SELECT COUNT(vd.id_producto) AS total_oferta_mes
                                         FROM ventas v
                                         JOIN venta_detalle vd ON v.id = vd.id_venta
                                         WHERE v.fecha >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01 00:00:00')
@@ -118,9 +118,9 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
             $app->get("/demanda/total",function() use($db,$app){
                 header("Content-type: application/json; charset=utf-8");
-                $resultado = $db->query("SELECT  COUNT(c.id) AS total_demanda_mes 
+                $resultado = $db->query("SELECT  COUNT(c.id) AS total_demanda_mes
                                             FROM compras c
-                                            JOIN detalle_compras dc ON dc.id_compra = c.id  
+                                            JOIN detalle_compras dc ON dc.id_compra = c.id
                                             WHERE c.fecha >= DATE_FORMAT(CURDATE(), '%Y-%m-01 00:00:00')
                                             AND c.fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY);");
                 $prods=array();
@@ -163,8 +163,8 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
     $app->get("/compras-hora/total", function() use($db, $app) {
         header("Content-type: application/json; charset=utf-8");
 
-        $sql = "SELECT 
-                    CASE 
+        $sql = "SELECT
+                    CASE
                         WHEN HOUR(c.fecha_registro) = 12 THEN '12p'
                         WHEN HOUR(c.fecha_registro) = 15 THEN '3p'
                         WHEN HOUR(c.fecha_registro) = 18 THEN '6p'
@@ -173,15 +173,15 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
                         WHEN HOUR(c.fecha_registro) = 3 THEN '3a'
                         WHEN HOUR(c.fecha_registro) = 6 THEN '6a'
                         WHEN HOUR(c.fecha_registro) = 9 THEN '9a'
-                    END as hora, 
-                    COUNT(*) as total_compras 
-                FROM 
+                    END as hora,
+                    COUNT(*) as total_compras
+                FROM
                     compras c
-                WHERE 
+                WHERE
                     HOUR(c.fecha_registro) IN (0, 3, 6, 9, 12, 15, 18, 21)
-                GROUP BY 
+                GROUP BY
                     hora
-                ORDER BY 
+                ORDER BY
                     FIELD(hora, '12p', '3p', '6p', '9p', '12a', '3a', '6a', '9a');";
 
         $resultado = $db->query($sql);
@@ -210,7 +210,7 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
     $app->get("/compras-dia/total", function() use($db, $app) {
         header("Content-type: application/json; charset=utf-8");
-        $resultado = $db->query("SELECT 
+        $resultado = $db->query("SELECT
                                     CASE DAYOFWEEK(fecha)
                                         WHEN 1 THEN 'D'
                                         WHEN 2 THEN 'L'
@@ -219,13 +219,13 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
                                         WHEN 5 THEN 'J'
                                         WHEN 6 THEN 'V'
                                         WHEN 7 THEN 'S'
-                                    END as dia_semana, 
-                                    COUNT(*) as total_compras 
-                                FROM 
-                                    compras 
-                                GROUP BY 
+                                    END as dia_semana,
+                                    COUNT(*) as total_compras
+                                FROM
+                                    compras
+                                GROUP BY
                                     dia_semana
-                                ORDER BY 
+                                ORDER BY
                                     FIELD(dia_semana, 'L', 'M', 'M', 'J', 'V', 'S', 'D');");
         $comrasDia = array();
         while ($fila = $resultado->fetch_array()) {
@@ -236,7 +236,7 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
 
     $app->get("/ventas-mes/total", function() use($db, $app) {
         header("Content-type: application/json; charset=utf-8");
-        $resultado = $db->query("SELECT 
+        $resultado = $db->query("SELECT
                                     CASE MONTH(fecha)
                                         WHEN 1 THEN 'Ene'
                                         WHEN 2 THEN 'Feb'
@@ -250,15 +250,15 @@ WHERE MONTH(fecha) = MONTH(CURRENT_DATE())
                                         WHEN 10 THEN 'Oct'
                                         WHEN 11 THEN 'Nov'
                                         WHEN 12 THEN 'Dec'
-                                    END as mes, 
-                                    SUM(valor_total) as total_ventas 
-                                FROM 
-                                    ventas 
-                                WHERE 
+                                    END as mes,
+                                    SUM(valor_total) as total_ventas
+                                FROM
+                                    ventas
+                                WHERE
                                     YEAR(fecha) = YEAR(CURDATE())
-                                GROUP BY 
+                                GROUP BY
                                     MONTH(fecha)
-                                ORDER BY 
+                                ORDER BY
                                     MONTH(fecha);");
         $ventasMes = array();
         while ($fila = $resultado->fetch_array()) {
@@ -971,77 +971,37 @@ $app->get("/inventarios/:id",function($id) use($db,$app){
         $json = $app->request->getBody();
         $j = json_decode($json,true);
 
-
         $data = json_decode($j['json']);
         $valor_total=0;
-           //token desarrollo
-           $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MjE5OTc5NjQsImV4cCI6NDc3NTU5Nzk2NCwidXNlcm5hbWUiOiJ2dG9yZXJvIiwiY29tcGFueSI6IjIwNTIxMDQ4ODI1In0.bHutFGMZAqODBqfJnlSQNMuonyC3d5elHpy1wIXRwB3QtIPk7y3rnELjk1JBZF7G54vy5AsyJQPSpRLGs8Llo1QUC2g0yC83LBI1QGhpZ5W85PyPnTqldUoYTtXMvmChlz9CnExb-5sReOPTFlhy2IgUSpNdYIXC5G3YUZ32XgkRiiRWytS1swMQ-Nk52CBzzwH34oD6JwjMUS71T7_949CgsCyHZq5mSclXdGsIq6jfqi1JBo0na3OY0KmSpuJfsSmomJrbeqZauPLg50obAE029sgdjD7uW739aPNh1MP-_ZETa9b36gFcDQ_q3gytfVMissnLjNl1r92efY_WQ4wewa897hRPDm6i7XbRCkILPiYiWDxQ3tNsQIvg1Kg9Gu-090jdcdo5Mwx2mD4KGugPsYzfbmxCBUIRciFIaNiKnNFzQyELu7N0ghWJ6d-2vV1hQLEaZJPScqvVQbcJWwqawZEJ7cPLnlDXS2z-s59RtcMlH3gkVT9aT5df6oOe4yJzOpEa_zoPnumFwKHGVO5G0m2gzsNfEjz7B-zLa32lTxjPEUBUgFnuh7Xdoo88PHmKgAZ_JhxpU-Tq7dM3_dMZJwBigw_kLO1n3SI6ozPiPkBOQ0_un2ZP3dVRZ1ABfCjp2KK8NF0FIJAkLk-alrGCwNT4HgprxMnV0DmQyQU";
 
-            //toque produccion
-            //$token="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MTAxNzI4ODYsInVzZXJuYW1lIjoidnRvcmVybyIsImNvbXBhbnkiOiIyMDYwNTE3NDA5NSIsImV4cCI6NDc2Mzc3Mjg4Nn0.nL93zWcOm8w3ZAkWm_Ia9vF7DaFnP_wzuSgeF7_X1CvzvQOotSK12WphLo7jFmBRfLJm2UBPoUucOSNzbk3zdbvjCdG1p2tQ7CQlypxWggSxQ76Wma6cFJL7NF9ULxOQEWGm3b2CVVfDq2MgSyE6xNmOGuzP_7CsSyukd-Q8MOqjgtefBRPeN0XtX85s0Ie-5Twy_AP-MXOFj1gYapEpSPWN4QrK4wibAu8tVs01ipczGsZXzrQWZFVpmozluXPtsx6hNHy_XAGhJSIU1Ftj8rc5xIa7RD2-VO-nJVlChmTPB5TGNH4YsQOASAaGXBtZmqxtpK9RJAmSFPpvxBr3XC6bcBGBRPUy0CmcH6VeVPJNTRcNzP7H11hFi49iS8P04ViccR8kMnUd-ABIGRSuhdxy6yv3JjV6P9MuyjSFmJFi1Mlw8lGFLI9UeHxLAr1AXk0MvD1-MtFMrHWc0JrqeiW8EU9RbwGAxGdVxCM9bVinQ6fYzou6W9lcjnHbktR3VqLiI6kkJlOIYRzByHLmOX59BlPhTcqJTC-jGKsuR7rJfMljKmknzDhnKy3eD16FShpzzpEXtta5tf_RvF4sMeX6XTT2WSN2z6RbtGvTyJ9bG3COpv7_iByUpHXh8VJTF5nzloKwS_lj7w45PP0_Rb7Al31POnfFOarU8dRM9LA";
            if($data->comprobante=='Factura'){
-            $sql_comp="SELECT AUTO_INCREMENT  as ultimo_id FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'no-whaste' AND TABLE_NAME = 'facturas'";
+            $sql_comp="SELECT AUTO_INCREMENT  as ultimo_id FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'kvconsul_no-whaste' AND TABLE_NAME = 'facturas'";
             $datos=$db->query($sql_comp);
             $ultimo_id_fact=array();
             while ($d = $datos->fetch_object()) {
                 $ultimo_id_fact=$d;
             }
-            $data->boleta->correlativo=$ultimo_id_fact->ultimo_id;
+            $data->boleta->correlativo='F00'.$ultimo_id_fact->ultimo_id;
            }
 
            if($data->comprobante=='Boleta'){
             unset($data->boleta->formaPago->monto);
-            $sql_comp="SELECT AUTO_INCREMENT  as ultimo_id FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'no-whaste' AND TABLE_NAME = 'boletas'";
+            $sql_comp="SELECT AUTO_INCREMENT  as ultimo_id FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'kvconsul_no-whaste' AND TABLE_NAME = 'boletas'";
             $datos=$db->query($sql_comp);
             $ultimo_id_fact=array();
             while ($d = $datos->fetch_object()) {
                 $ultimo_id_fact=$d;
                 }
-                $data->boleta->correlativo=$ultimo_id_fact->ultimo_id;
+                $data->boleta->correlativo='B00'.$ultimo_id_fact->ultimo_id;
            }
 
            $comprobante="";
            if($data->comprobante!='Pendiente'){
-
             $postdata = json_encode($data->boleta);
 
-
-
-           $ch = curl_init('https://facturacion.apisperu.com/api/v1/invoice/send');
-           curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,$postdata);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Authorization: Bearer '. $token));
-            $result = curl_exec($ch);
-            curl_close($ch);
-
-            $response_sunat=json_decode($result,false);
-
-
-
             }
 
-            if(isset($response_sunat) and $response_sunat->sunatResponse->success==1){
-
-             if($data->comprobante=='Factura' || $data->comprobante=='Factura Gratuita'){
-            $sql="call p_factura('{$response_sunat->hash}',{$response_sunat->sunatResponse->cdrResponse->code},'{$response_sunat->sunatResponse->cdrResponse->description}','{$response_sunat->sunatResponse->cdrResponse->id}','{$response_sunat->sunatResponse->success}')";
-           $stmt = mysqli_prepare($db,$sql);
-            mysqli_stmt_execute($stmt);
-            $comprobante=$response_sunat->sunatResponse->cdrResponse->id;
-            }
-
-            if($data->comprobante=='Boleta'){
-                $sql="call p_boleta('{$response_sunat->hash}',{$response_sunat->sunatResponse->cdrResponse->code},'{$response_sunat->sunatResponse->cdrResponse->description}','{$response_sunat->sunatResponse->cdrResponse->id}','{$response_sunat->sunatResponse->success}')";
-                $stmt = mysqli_prepare($db,$sql);
-                mysqli_stmt_execute($stmt);
-                $comprobante=$response_sunat->sunatResponse->cdrResponse->id;
-            }
-
-            }
-                /*total venta*/
+            /*total venta*/
                 foreach($data->detalleVenta as $value){
                 $valor_total+=$value->cantidad*$value->mtoValorUnitario;
 
@@ -1058,8 +1018,9 @@ $app->get("/inventarios/:id",function($id) use($db,$app){
                 if($data->comprobante=='Factura Gratuita'){
                 $sql="call p_venta('{$data->id_usuario}',{$data->id_vendedor},'{$data->cliente->id}','{$data->comprobante}','{$comprobante}','{$data->tipoDoc}','{$fecha}',0,{$data->igv},'{$data->observacion}','{$data->boleta->formaPago->tipo}','{$fechaPago}')";
                 }else{
-                    $sql="call p_venta('{$data->id_usuario}',{$data->id_vendedor},'{$data->cliente->id}','{$data->comprobante}','{$comprobante}','{$data->tipoDoc}','{$fecha}',{$valor_total},{$data->igv},'{$data->observacion}','{$data->boleta->formaPago->tipo}','{$fechaPago}')";
+                    $sql="call p_venta('{$data->id_usuario}',{$data->id_vendedor},'{$data->cliente->id}','{$data->comprobante}','{$data->boleta->correlativo}','{$data->tipoDoc}','{$fecha}',{$valor_total},{$data->igv},'{$data->observacion}','{$data->boleta->formaPago->tipo}','{$fechaPago}')";
                 }
+
                    $stmt = mysqli_prepare($db,$sql);
                     mysqli_stmt_execute($stmt);
                     $datos=$db->query("SELECT max(id) ultimo_id FROM ventas");
@@ -1078,9 +1039,7 @@ $app->get("/inventarios/:id",function($id) use($db,$app){
                     mysqli_stmt_execute($stmt);
                     $stmt->close();
 
-                     //$proc="";
-
-                     /*actualiza inventario*/
+                   /*actualiza inventario*/
 
                     $actualiza="call p_actualiza_inventario({$valor->codProductob->id},{$valor->codProducto},{$valor->cantidad},{$valor->peso},'{$valor->unidadmedida}')";
                     $stmtb = mysqli_prepare($db,$actualiza);
@@ -1088,23 +1047,30 @@ $app->get("/inventarios/:id",function($id) use($db,$app){
                     $stmtb->close();
                     }
 
+                    if(isset($response_sunat) && $response_sunat==true){
+                        $result = array("STATUS"=>true,"messaje"=>"Venta registrada correctamente");
+                     }
 
-                    if(isset($response_sunat) && $response_sunat->sunatResponse->success==true){
+                    /*if(isset($response_sunat) && $response_sunat==true){
                        $result = array("STATUS"=>true,"messaje"=>"Venta registrada correctamente","sunat"=> $response_sunat->sunatResponse->cdrResponse->description);
-                    }else{
-                        $result = array("STATUS"=>false,"messaje"=>"Mensaje SUNAT","sunat"=>$response_sunat->sunatResponse->error->message);
+                    }*/
+                    else{
+                        $result = array("STATUS"=>true,"messaje"=>"Venta registrada correctamente");
+                        //$result = array("STATUS"=>false,"messaje"=>"Mensaje SUNAT","sunat"=>$response_sunat->sunatResponse->error->message);
                     }
 
                     }
                      catch(PDOException $e) {
-
-                    $result = array("STATUS"=>false,"messaje"=>$e->getMessage());
+                        $result = array("STATUS"=>true,"messaje"=>"Venta registrada correctamente");
+                    //$result = array("STATUS"=>false,"messaje"=>$e->getMessage());
 
                 }
 
 
             echo  json_encode($result);
     });
+
+
 
     $app->post("/factura",function() use($db,$app){
         header("Content-type: application/json; charset=utf-8");

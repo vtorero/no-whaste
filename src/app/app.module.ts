@@ -48,6 +48,8 @@ import { ProyeccionComponent } from './prediccion/proyeccion/proyeccion.componen
 import { AddProductoComponent } from './dialog/add-producto/add-producto.component';
 import { AgregarInventarioComponent } from './dialog/agregar-inventario/agregar-inventario.component';
 import { ComprasComponent } from './compras/compras.component';
+import { AddComprasComponent } from './compras/add-compras/add-compras.component';
+import { AddDetalleComponent } from './compras/add-compras/add-detalle/add-detalle.component';
 
 
 @NgModule({
@@ -83,6 +85,7 @@ import { ComprasComponent } from './compras/compras.component';
     VentasComponent,
     AgregarventaComponent,
     EditarventaComponent,
+
     ListadoComponent,
     HomeComponent,
     InventariosComponent,
@@ -104,8 +107,8 @@ import { ComprasComponent } from './compras/compras.component';
     AddProductoComponent,
       AgregarInventarioComponent,
       ComprasComponent,
-
-
+      AddComprasComponent,
+      AddDetalleComponent
     ],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorEspañol},{provide: MAT_DATE_LOCALE, useValue: 'pe-ES'}],
   bootstrap: [AppComponent]

@@ -1,0 +1,79 @@
+<div style="height: 650px;overflow-y: auto;overflow-x: hidden;">
+    <form #formGeneral="ngForm">
+    <div mat-dialog-content>
+      <h3>Agregar Compra</h3>
+        <div style="display: flex;flex-direction: column; margin:1rem auto; width: 750px; padding: 1rem;">
+          <div class="row">
+            <div class="col-6"><mat-form-field>
+                <mat-label>Comprobante</mat-label>
+                <mat-select  name="comprobante" #comprobante="ngModel" [(ngModel)]="data.comprobante" required>
+                  <mat-option [value]="">Seleccionar</mat-option>
+                  <mat-option  *ngFor="let cat of dataComprobantes" [value]="cat.id">{{cat.tipo}}</mat-option>
+                </mat-select>
+              </mat-form-field></div>
+            <div class="col-6">    <mat-form-field>
+                <mat-label>Numero comprobante</mat-label>
+                  <input matInput name="num_comprobante" #num_comprobante="ngModel" [(ngModel)]="data.num_comprobante" type="text" placeholder="Ingrese Numero" required>
+              </mat-form-field></div>
+          </div>
+            <mat-form-field>
+              <mat-label>Descripción</mat-label>
+              <input matInput name="descripcion" #descripcion="ngModel" [(ngModel)]="data.descripcion" type="text" placeholder="Descripción" required>
+          </mat-form-field>
+          <div class="row">
+            <div class="col-6"><mat-form-field>
+                <mat-label>Proveedor</mat-label>
+                <mat-select name="id_proveedor" #id_proveedor="ngModel" [(ngModel)]="data.id_proveedor" required>
+                  <input (keyup)="onKey($event.target.value)" placeholder="Buscar..">
+                  <mat-option  *ngFor="let cat of dataProveedor" [value]="cat.id">
+                    {{cat.razon_social}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field></div>
+            <div class="col-6">
+                <mat-form-field>
+                <mat-label>Fecha</mat-label>
+                <input  matInput [matDatepicker]="myPicker" name="fecha" #fecha="ngModel" [(ngModel)]="data.fecha" placeholder="Fecha">
+                <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
+                <mat-datepicker #myPicker></mat-datepicker>
+            </mat-form-field></div>
+          </div>
+        </div>
+    </div>
+  </form>
+  <div mat-dialog-content>
+    <h4>Detalle de compra</h4>
+    <button class="btn btn-success" (click)="abrirDialog()">Agregar Producto</button>
+      <div class="example-container mat-elevation-z8" style="overflow-y:scroll;height: auto;">
+      <mat-table [dataSource]="dataSource" matSort>
+          <!--  Columna ID-->
+          <ng-container matColumnDef="nombre">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.descripcion}} </mat-cell>
+          </ng-container>
+         <!-- Columna Apellido -->
+          <ng-container matColumnDef="cantidad">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.cantidad}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="precio">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>precio</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.precio}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="borrar">
+        <th mat-header-cell *matHeaderCellDef> Opciones </th>
+        <td mat-cell *matCellDef="let row ;let j = index;">
+              <button class="btn btn-primary" (click)="deleteTicket(j)" cdkFocusInitial> Eliminar</button>
+         </td>
+      </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <!--<mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>-->
+      </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="cancelar()">Cancelar</button>
+        <button mat-raised-button [mat-dialog-close]="data" [disabled]="!formGeneral.form.valid" cdkFocusInitial>Registrar</button>
+    </div>
+    </div></div>

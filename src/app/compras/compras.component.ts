@@ -1,4 +1,3 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
@@ -14,12 +13,14 @@ import { Boleta } from 'app/models/Boleta/boleta';
 import { Venta } from 'app/models/ventas';
 import { Details } from 'app/models/Boleta/details';
 import { Cuota } from 'app/models/Boleta/cuota';
-import { Cliente } from 'app/models/cliente';
+import { Compra} from 'app/models/compra';
 import { DetalleVenta } from 'app/models/detalleVenta';
 import { Company } from 'app/models/Boleta/company';
 import { Client } from '../models/Boleta/cliente';
 import { EditarComponent } from 'app/ventas/editar/editar.component';
-import { AgregarComponent } from 'app/ventas/agregar/agregar.component';
+
+import { AddComprasComponent } from './add-compras/add-compras.component';
+
 
 function sendInvoice(data,nro,url) {
   fetch(url, {
@@ -44,7 +45,7 @@ function getCDR(nro,url) {
     method: 'post',
     headers: {
       'Content-Type': 'application/zip',
-      'Authorization': 'Bearer ' + Global.TOKEN_FACTURACION 
+      'Authorization': 'Bearer ' + Global.TOKEN_FACTURACION
     },
     body: JSON.stringify({"rucSol":"20605174095","userSol":"PUREADYS","passSol":"bleusiger","ruc":"20605174095","tipo":"01","serie":"F001","numero":nro})
   })
@@ -185,7 +186,7 @@ openBusqueda(){
 
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    const dialogo1 =this.dialog.open(AgregarComponent, {
+    const dialogo1 =this.dialog.open(AddComprasComponent, {
       width: 'auto',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -220,7 +221,7 @@ replaceStr(str, find, replace) {
 }
 
 
-agregar(art:Venta) {
+agregar(art:Compra) {
   console.log("art",art)
   this.cargando=true;
   if (art.comprobante != 'Pendiente') {
@@ -229,9 +230,9 @@ agregar(art:Venta) {
     let fecha1;
     let fecha2;
     var boleta: Boleta = new Boleta('',localStorage.getItem("id_usuario"), '', '', '', this.Moment, '', this.cliente, this.company, 0, 0, 0,0, 0,0,0,0,0, '', [], [{ code: '', value: '' }],{moneda:'',tipo:'',monto:0},[]);
-    fec1 = art.fecha.toDateString().split(" ", 4);
+    fec1 = art.fecha.split(" ", 4);
 
-    fec2 = art.fechaPago.toDateString().split(" ", 4);
+    fec2 = art.fecha.split(" ", 4);
     var find = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var replace = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
@@ -244,29 +245,29 @@ agregar(art:Venta) {
     boleta.ublVersion = "2.1";
     boleta.tipoOperacion = "0101";
     /**cliente*/
-    if (art.cliente.nombre) {
+    if (art.razon_social) {
       boleta.tipoDoc = "03";
       boleta.serie = "B001";
       boleta.client.tipoDoc = "1";
-      boleta.client.rznSocial = art.cliente.nombre + ' ' + art.cliente.apellido;
-      art.tipoDoc="1";
+      boleta.client.rznSocial = art.razon_social;
+      art.comprobante="1";
       this.api.getMaxId('boletas').subscribe(id=>{
       boleta.correlativo=id[0].ultimo.toString();
          });
     }
-    if (art.cliente.razon_social) {
+    if (art.razon_social) {
       boleta.tipoDoc = "01";
       boleta.serie = "F001";
       boleta.client.tipoDoc = "6";
-      boleta.client.rznSocial = art.cliente.razon_social;
-      art.tipoDoc="2";
+      boleta.client.rznSocial = art.razon_social;
+      art.comprobante="2";
       this.api.getMaxId('facturas').subscribe(id=>{
         boleta.correlativo=id[0].ultimo.toString();
            });
     }
 
-    boleta.client.numDoc = art.cliente.num_documento;
-    boleta.client.address.direccion = art.cliente.direccion;
+    boleta.client.numDoc = art.num_comprobante;
+    boleta.client.address.direccion = art.razon_social;
 
     /*company*/
     boleta.company.ruc =  Global.RUC_EMPRESA;
@@ -280,7 +281,7 @@ agregar(art:Venta) {
     boleta.company.address.direccion = "AV. PARDO Y ALIAGA N° 699 INT. 802";
     boleta.comprobante=art.comprobante;
     let total = 0;
-    art.detalleVenta.forEach(function (value: any) {
+    art.detalleCompra.forEach(function (value: any) {
 
       let detalleBoleta: Details = new Details('', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
       detalleBoleta.codProducto = value.codProductob.codigo;
@@ -335,7 +336,7 @@ agregar(art:Venta) {
     }
 
 
-    if(art.formaPago=='Credito' && art.cliente.razon_social){
+    if(art.razon_social){
     boleta.formaPago.tipo="Credito";
     boleta.formaPago.moneda="PEN";
     boleta.formaPago.monto=parseFloat((total + (total * Global.BASE_IGV)).toFixed(2))
@@ -400,8 +401,8 @@ agregar(art:Venta) {
           });
           */
 
-          art.boleta=boleta;
-          this.api.GuardarVenta(art).subscribe(data => {
+
+          this.api.GuardarCompra(art).subscribe(data => {
             if(data['STATUS']){
             this._snackBar.open(data['sunat'],"Mensaje SUNAT");
 
@@ -413,18 +414,12 @@ agregar(art:Venta) {
           });
 
 
-      if (art.imprimir) {
 
-
-
-
-        sendInvoice(JSON.stringify(boleta), boleta.serie + boleta.correlativo,'https://facturacion.apisperu.com/api/v1/invoice/pdf');
-      }
       this.cargando=false;
 
   });
   }else{
-    this.api.GuardarVenta(art).subscribe(data => {
+    this.api.GuardarCompra(art).subscribe(data => {
       this._snackBar.open(data['messaje']);
     },
       error => { console.log(error) }

@@ -404,10 +404,10 @@ agregar(art:Venta) {
           art.boleta=boleta;
           this.api.GuardarVenta(art).subscribe(data => {
             if(data['STATUS']){
-            this._snackBar.open(data['sunat'],"Mensaje SUNAT");
+            this._snackBar.open(data['messaje'],"Aceptar");
 
               }else{
-                this._snackBar.open(data['sunat'],"Mensaje SUNAT");
+                this._snackBar.open(data['messaje'],"Aceptar");
 
 
             }
