@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import * as Chartist from 'chartist';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import ReactComponent from '../../ReactComponent';
 
 @Component({
   selector: 'app-home',
