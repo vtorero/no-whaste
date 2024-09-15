@@ -31,6 +31,7 @@ import {ReduccionComponent} from 'app/prediccion/reduccion/reduccion.component';
 import {EstrategiaComponent} from 'app/prediccion/estrategia/estrategia.component';
 import {ProyeccionComponent} from 'app/prediccion/proyeccion/proyeccion.component';
 import {ComprasComponent} from '../../compras/compras.component';
+import { OfertaDemandaComponent } from '../../prediccion/oferta-demanda/oferta-demanda.component';
 
 export const AdminLayoutRoutes: Routes = [
   // {
@@ -110,6 +111,7 @@ export const AdminLayoutRoutes: Routes = [
       {path: 'reduccion', component: ReduccionComponent},
       {path: 'estrategias', component: EstrategiaComponent},
       {path: 'proyeccion', component: ProyeccionComponent},
+      {path: 'oferta-demanda', component: OfertaDemandaComponent},
     ],
   },
 ];

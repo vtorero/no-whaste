@@ -86,6 +86,12 @@ export const ROUTES: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
+      {
+        pat: '/estadisticas/oferta-demanda',
+        tit: 'Oferta y Demanda',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
     ],
   },
   {
