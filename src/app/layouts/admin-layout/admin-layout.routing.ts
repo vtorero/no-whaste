@@ -91,7 +91,7 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'productos/listado', component: ProductosComponent},
   {path: 'productos/inventario', component: InventariosComponent},
   {path: 'productos/compras', component: ComprasComponent},
-  {path: 'productos', component: HomeComponent},
+  {path: 'productos', component: ProductosComponent},
   {path: 'seguridad', component: UsuarioComponent},
   {path: 'usuarios', component: UsuarioComponent},
   {path: 'sucursales', component: SucursalesComponent},
