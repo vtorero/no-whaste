@@ -1,38 +1,47 @@
-<div>
-  <h1>Estrategias</h1>
-  <div *ngIf="hasEffectiveStrategies" class="row">
-    <div class="col-md-4" *ngFor="let strategy of strategies">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Estrategia: {{ strategy.name }}</h5>
-          <p class="card-text">
-            Porcentaje de Mejora:
-            {{ strategy.improvementPercentage | number : '1.0-2' }}%
-          </p>
-          <h6>Categoría:</h6>
-          <p>
-            <span *ngFor="let cat of strategy.categories">
-              {{ cat.nombre }}
-            </span>
-          </p>
-          <h6>Subcategorías:</h6>
-          <p>
-            <span *ngFor="let subCat of strategy.subCategories">
-              {{ subCat.nombre }}
-            </span>
-          </p>
-          <div *ngFor="let product of strategy.products">
-            <img
-              [src]="product.imagen"
-              alt="Imagen del Producto"
-              class="img-fluid"
-            />
+<div *ngIf="hasEffectiveStrategies" class="container">
+  <!-- Iterar sobre cada estrategia -->
+  <div *ngFor="let strategy of strategies" class="mb-4">
+    <div class="card strategy-card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title text-primary">Estrategia: {{ strategy.name }}</h5>
+        <p class="card-text text-muted">
+          Porcentaje de Mejora:
+          <span class="text-success">{{ strategy.improvementPercentage | number : '1.0-2' }}%</span>
+        </p>
+
+        <!-- Mostrar las categorías como badges -->
+        <h6>Categoría(s):</h6>
+        <div>
+          <span *ngFor="let category of strategy.categories" class="badge bg-info text-dark me-1">
+            {{ category.nombre }}
+          </span>
+        </div>
+
+        <!-- Mostrar las subcategorías como badges -->
+        <h6>Subcategoría(s):</h6>
+        <div>
+          <span *ngFor="let subCategory of strategy.subCategories" class="badge bg-secondary me-1">
+            {{ subCategory.nombre }}
+          </span>
+        </div>
+
+        <!-- Mostrar los productos asociados -->
+        <h6>Productos:</h6>
+        <div class="row">
+          <div *ngFor="let product of strategy.products" class="col-md-4 mb-3">
+            <div class="card product-card shadow-sm">
+              <img
+                [src]="product.imagen"
+                alt="{{ product.nombre }}"
+                class="card-img-top img-fluid"
+              />
+              <div class="card-body text-center">
+                <h5 class="card-title">{{ product.nombre }}</h5>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <p *ngIf="!hasEffectiveStrategies">
-    No hay estrategias efectivas disponibles
-  </p>
 </div>

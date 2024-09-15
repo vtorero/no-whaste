@@ -1,4 +1,5 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {DataService} from './service/DataService';
 import * as knnClassifier from '@tensorflow-models/knn-classifier';
 import * as tf from '@tensorflow/tfjs';
 
@@ -8,25 +9,29 @@ import * as tf from '@tensorflow/tfjs';
   styleUrls: ['./modelo-clasificacion.component.css'],
 })
 export class ModeloClasificacionComponent implements OnInit {
-  @Input() data: {sales: number[]} = {sales: []}; // Esto permite pasar los datos reales desde el padre
-
   mse: number | null = null;
   r2: number | null = null;
   predictedSales: number | null = null;
+  sales: number[] = [];
 
-  constructor() {}
+  constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    if (this.data.sales.length > 0) {
-      this.runClassification();
-    } else {
-      console.error('No hay suficientes datos para realizar la clasificación.');
-    }
+    this.dataService.getData().subscribe((response) => {
+      this.sales = response.sales; // Obtener las ventas del API
+      if (this.sales.length > 0) {
+        this.runClassification(); // Ejecutar el modelo una vez que se obtienen los datos
+      } else {
+        console.error(
+          'No hay suficientes datos para realizar la clasificación.'
+        );
+      }
+    });
   }
 
   async runClassification() {
     const classifier = knnClassifier.create();
-    const sales = this.data.sales;
+    const sales = this.sales;
     const tensorSales = tf.tensor1d(sales);
 
     // Normalización de los datos
@@ -36,54 +41,71 @@ export class ModeloClasificacionComponent implements OnInit {
 
     // Añadir ejemplos al clasificador KNN
     for (let i = 0; i < sales.length - 1; i++) {
-      const example = tf.tensor1d([
-        normTensorSales.slice([i], [1]).dataSync()[0],
-      ]); // Convertir a tensor
-      const label = normTensorSales.slice([i + 1], [1]).dataSync()[0]; // Extraer el número del tensor
+      const exampleValue = (await normTensorSales.slice([i], [1]).data())[0];
+      const labelValue = (await normTensorSales.slice([i + 1], [1]).data())[0];
 
-      classifier.addExample(example, label); // Pasar tensores
+      const example = tf.tensor1d([exampleValue]); // Crear un tensor 1D
+      classifier.addExample(example, labelValue); // Añadir ejemplo y etiqueta
+      example.dispose(); // Liberar memoria del tensor
     }
 
     // Predicción de una nueva venta
-    const newSale = 80; // Aquí podrías reemplazar este valor con los datos reales si fuera necesario
-    const normNewSale = tf.scalar(newSale).sub(mean).div(std); // Convertir a tensor
-    const prediction = await classifier.predictClass(normNewSale); // Pasar el tensor
+    const newSale = 80; // Ejemplo, cambiar si necesario
+    const normNewSale = tf.scalar(newSale).sub(mean).div(std);
+    const prediction = await classifier.predictClass(normNewSale);
 
     const denormalizedPrediction = std
       .mul(tf.tensor1d([prediction.confidences[prediction.label]]))
       .add(mean);
 
-    this.predictedSales = denormalizedPrediction.dataSync()[0];
+    this.predictedSales = (await denormalizedPrediction.data())[0]; // Extraer el valor
+
+    // Liberar memoria
+    normNewSale.dispose();
+    denormalizedPrediction.dispose();
 
     // Calcular MSE y R²
     const predictions: number[] = [];
     for (let i = 0; i < sales.length - 1; i++) {
       const tensorExample = tf.tensor1d([
-        normTensorSales.slice([i], [1]).dataSync()[0],
-      ]); // Convertir a tensor
-      const prediction = await classifier.predictClass(tensorExample); // Pasar el tensor
-
+        await normTensorSales.slice([i], [1]).data()[0],
+      ]);
+      const prediction = await classifier.predictClass(tensorExample);
       const denormalizedPrediction = std
         .mul(tf.tensor1d([prediction.confidences[prediction.label]]))
         .add(mean);
-      predictions.push(denormalizedPrediction.dataSync()[0]);
+
+      predictions.push((await denormalizedPrediction.data())[0]); // Extraer el valor
+
+      tensorExample.dispose();
+      denormalizedPrediction.dispose();
     }
 
     const mseTensor = tf.losses.meanSquaredError(sales.slice(1), predictions);
     const mseValue = await mseTensor.data();
-    this.mse = mseValue[0];
+    this.mse = mseValue[0]; // Extraer el valor
+    mseTensor.dispose(); // Liberar memoria
 
-    const totalSumSquares = tf
-      .sum(tf.squaredDifference(tensorSales.mean(), tensorSales))
-      .dataSync()[0];
-    const residualSumSquares = tf
-      .sum(
-        tf.squaredDifference(
-          tensorSales.slice([1], [sales.length - 1]),
-          tf.tensor1d(predictions)
+    const totalSumSquares = (
+      await tf.sum(tf.squaredDifference(tensorSales.mean(), tensorSales)).data()
+    )[0]; // Extraer el valor del tensor
+    const residualSumSquares = (
+      await tf
+        .sum(
+          tf.squaredDifference(
+            tensorSales.slice([1], [sales.length - 1]),
+            tf.tensor1d(predictions)
+          )
         )
-      )
-      .dataSync()[0];
+        .data()
+    )[0]; // Extraer el valor del tensor
+
     this.r2 = 1 - residualSumSquares / totalSumSquares;
+
+    // Liberar memoria
+    tensorSales.dispose();
+    normTensorSales.dispose();
+    std.dispose();
+    mean.dispose();
   }
 }

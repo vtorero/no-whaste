@@ -1,17 +1,58 @@
-.card {
-  margin-bottom: 20px;
+.container {
+  padding-top: 20px;
+}
+
+.strategy-card {
+  border-radius: 10px;
+  border: none;
+}
+
+.product-card {
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .card-title {
   font-weight: bold;
+  font-size: 1.2em;
 }
 
 .img-fluid {
-  max-width: 100%;
-  height: auto;
+  border-radius: 10px 10px 0 0;
+  max-height: 200px;
   object-fit: cover;
+}
+
+.card-body {
+  padding: 15px;
 }
 
 .card-text {
   margin-bottom: 10px;
+}
+
+.badge {
+  font-size: 0.9em;
+  padding: 0.4em 0.7em;
+}
+
+.text-primary {
+  color: #007bff;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+.text-dark {
+  color: #343a40;
 }

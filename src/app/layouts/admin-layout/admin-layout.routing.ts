@@ -103,7 +103,7 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'upgrade', component: UpgradeComponent},
   {path: 'prediccion-producto', component: PorProductoComponent},
   {
-    path: 'prediccion',
+    path: 'estadisticas',
     children: [
       {path: '', redirectTo: 'mermas', pathMatch: 'full'},
       {path: 'mermas', component: MermasComponent},

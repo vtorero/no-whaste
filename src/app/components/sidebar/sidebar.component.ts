@@ -55,33 +55,33 @@ export const ROUTES: RouteInfo[] = [
   },
   /*{ path: '/redneuronal', title: 'Red Neuronal',  icon:'dashboard', class: '',child:[]},*/
   {
-    path: '/prediccion',
-    title: 'Predicciones',
+    path: '/estadisticas',
+    title: 'Estadisticas',
     icon: 'dashboard',
-    redirectTo: '/prediccion/mermas',
+    redirectTo: '/estadisticas/mermas',
     pathMatch: 'full',
     class: '',
     child: [
       {
-        pat: '/prediccion/mermas',
+        pat: '/estadisticas/mermas',
         tit: 'Mermas',
         icn: 'bubble_chart',
         cls: 'library_books',
       },
       {
-        pat: '/prediccion/reduccion',
+        pat: '/estadisticas/reduccion',
         tit: 'Reducción',
         icn: 'bubble_chart',
         cls: 'library_books',
       },
       {
-        pat: '/prediccion/estrategias',
+        pat: '/estadisticas/estrategias',
         tit: 'Estrategias',
         icn: 'bubble_chart',
         cls: 'library_books',
       },
       {
-        pat: '/prediccion/proyeccion',
+        pat: '/estadisticas/proyeccion',
         tit: 'Proyección',
         icn: 'bubble_chart',
         cls: 'library_books',
