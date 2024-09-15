@@ -117,14 +117,14 @@ function insertDetalleCompra($db, $idCompra)
 function insertVentas($db)
 {
     $ventasData = [
-        [1, 1, 1, 0.18, 180.00, 1000.00],
-        [1, 1, 41, 0.18, 457.00, 2498.90],
+        [1, 1, 1, 0.18, 180.00, 200.00],
+        [1, 1, 41, 0.18, 457.00, 200.90],
         // Add more rows as needed
     ];
 
     $ventaDetallesData = [
-        [55, 1, 'KGM', 100.0000, 0.0000, 1000.0000],
-        [32, 9, 'NIU', 30.0000, 0.0000, 847.0000],
+        [55, 1, 'KGM', 100.0000, 0.0000, 200.0000],
+        [32, 9, 'NIU', 30.0000, 0.0000, 200.0000],
         // Add more rows as needed
     ];
 
@@ -160,8 +160,8 @@ function insertVentas($db)
 function insertInventario($db)
 {
     $inventarioData = [
-        [12, 'bolsa', 'NIU', 33000],
-        [104, 'bolsa', 'NIU', 3000],
+        [12, 'bolsa', 'NIU', 300],
+        [104, 'bolsa', 'NIU', 300],
         // Add more rows as needed
     ];
     $today = date('Y-m-d');

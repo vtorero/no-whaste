@@ -20,22 +20,26 @@ export class EstrategiaComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.fetchData().subscribe(
       (data) => {
-        this.data = {
-          wastes: data.waste,
-          sales: data.sales,
-          demands: data.demands,
-          offers: data.offers,
-          products: data.productos,
-          season: data.season,
-          categories: data.categorias,
-          subCategories: data.subCategorias,
-        };
+        // Verificación de que los datos contengan los productos
+        if (data && data.productos) {
+          this.data = {
+            wastes: data.waste,
+            sales: data.sales,
+            demands: data.demands,
+            offers: data.offers,
+            products: data.productos,
+            season: data.season,
+            categories: data.categorias,
+            subCategories: data.subCategorias,
+          };
 
-        this.strategies = this.strategyService
-          .recommendStrategies(this.data)
-          .filter((strategy) => strategy.improvementPercentage >= 10);
-
-        this.hasEffectiveStrategies = this.strategies.length > 0;
+          this.strategies = this.strategyService
+            .recommendStrategies(this.data)
+            .filter((strategy) => strategy.improvementPercentage >= 10);
+          this.hasEffectiveStrategies = this.strategies.length > 0;
+        } else {
+          console.error('Los datos no contienen productos');
+        }
       },
       (error) => {
         console.error('Error fetching data:', error);

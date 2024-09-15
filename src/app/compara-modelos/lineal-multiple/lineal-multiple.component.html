@@ -1,12 +1,16 @@
 <div class="content">
-    <app-barratareas></app-barratareas>
+  <app-barratareas></app-barratareas>
 
-<div class="row">
-<div class="ml-5 col-12">
-    <!--<div #reactComponentPlaceholder></div>-->
-<iframe src="https://franz.kvconsult.com/multiple/" width="100%" height="300%" style="border:0;"></iframe>
+  <div class="row">
+    <div class="ml-5 col-12">
+      <div>
+        <h1>Modelo de Regresión Lineal Múltiple</h1>
+        <p>
+          La cantidad estimada de ventas es: S/ {{ predictionDenormalized }}
+        </p>
+        <p>Error cuadrático medio: {{ meanSquaredError }}</p>
+        <p>Precisión: {{ accuracy }}%</p>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-
-</div>
-

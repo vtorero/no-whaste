@@ -42,15 +42,22 @@ export class StrategyService {
 
     filteredProducts.forEach((product) => {
       const index = data.products.indexOf(product);
+
+      // Asegurarnos de que el índice es válido y existen tanto la categoría como la subcategoría
       if (index >= 0) {
         const category = data.categories[index];
         const subCategory = data.subCategories[index];
 
-        if (!categories.some((cat) => cat.id === category.id)) {
+        // Validar que la categoría existe antes de acceder a sus propiedades
+        if (category && !categories.some((cat) => cat.id === category.id)) {
           categories.push(category);
         }
 
-        if (!subCategories.some((subCat) => subCat.id === subCategory.id)) {
+        // Validar que la subcategoría existe antes de acceder a sus propiedades
+        if (
+          subCategory &&
+          !subCategories.some((subCat) => subCat.id === subCategory.id)
+        ) {
           subCategories.push(subCategory);
         }
       }
@@ -147,7 +154,7 @@ export class StrategyService {
     strategies.push(
       this.createStrategy(
         uuidv4(),
-        'Mejorar la calidad del producto para reducir las Wastes',
+        'Mejorar la calidad del producto para reducir las mermas',
         highWasteProducts,
         calculateValue(highWasteProducts, data),
         calculateValue(highWasteProducts, data) * 1.1,
@@ -191,4 +198,3 @@ export class StrategyService {
     return strategies;
   }
 }
-  

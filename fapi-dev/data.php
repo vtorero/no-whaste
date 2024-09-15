@@ -47,81 +47,82 @@ $app->get("/pred-producto/:id/:inicio/:fin", function ($id, $inicio, $fin) use (
 $app->get("/api", function () use ($db, $app) {
     header("Content-type: application/json; charset=utf-8");
 
-    $json = $app->request->getBody();
-    $dat = json_decode($json, true);
-
-    // Function to execute the query and fetch results
+    // Función para ejecutar una consulta y devolver los resultados en un array
     function fetchSingleResult($db, $query)
     {
         $result = $db->query($query);
-        return $result->fetch_array();
+        return $result->fetch_assoc(); // Devolver el resultado como array asociativo
     }
 
-    // Function to fetch results by date range for subcategories
-    function fetchSubCategoryData($db, $startDate, $endDate)
+    // Función para obtener todas las categorías, subcategorías y productos correctamente relacionados
+    function fetchCategorySubcategoryProductData($db)
     {
         $query = "
-            SELECT sc.id, sc.nombre, COUNT(*) total
-            FROM ventas v
-            JOIN venta_detalle vd ON v.id = vd.id_venta
-            JOIN productos pd ON vd.id_producto = pd.id
-            JOIN categorias cat ON pd.id_categoria = cat.id
+            SELECT 
+                cat.id AS categoria_id, 
+                cat.nombre AS categoria_nombre,
+                sc.id AS subcategoria_id, 
+                sc.nombre AS subcategoria_nombre,
+                pd.id AS producto_id,
+                pd.nombre AS producto_nombre,
+                pd.image AS producto_imagen
+            FROM productos pd
             JOIN sub_categorias sc ON pd.id_subcategoria = sc.id
-            WHERE v.fecha BETWEEN '$startDate' AND '$endDate'
-            GROUP BY sc.id
-            ORDER BY total DESC
-            LIMIT 1
+            JOIN categorias cat ON sc.id_categoria = cat.id
         ";
-        return fetchSingleResult($db, $query);
+
+        $result = $db->query($query);
+        $categorias = [];
+        $subCategorias = [];
+        $productos = [];
+
+        // Organizar los datos de la consulta
+        while ($row = $result->fetch_assoc()) {
+            // Agregar categorías
+            if (!isset($categorias[$row['categoria_id']])) {
+                $categorias[$row['categoria_id']] = [
+                    'id' => (int) $row['categoria_id'],
+                    'nombre' => $row['categoria_nombre']
+                ];
+            }
+
+            // Agregar subcategorías
+            if (!isset($subCategorias[$row['subcategoria_id']])) {
+                $subCategorias[$row['subcategoria_id']] = [
+                    'id' => (int) $row['subcategoria_id'],
+                    'nombre' => $row['subcategoria_nombre']
+                ];
+            }
+
+            // Agregar productos
+            if (!isset($productos[$row['producto_id']])) {
+                $productos[$row['producto_id']] = [
+                    'id' => (int) $row['producto_id'],
+                    'nombre' => $row['producto_nombre'],
+                    'imagen' => $row['producto_imagen']
+                ];
+            }
+        }
+
+        // Reindexar los arrays para quitar las claves asociativas
+        $categorias = array_values($categorias);
+        $subCategorias = array_values($subCategorias);
+        $productos = array_values($productos);
+
+        return compact('categorias', 'subCategorias', 'productos');
     }
 
-    // Function to fetch results by date range for products
-    function fetchProductData($db, $startDate, $endDate)
-    {
-        $query = "
-            SELECT pd.id, pd.nombre, COUNT(*) total
-            FROM ventas v
-            JOIN venta_detalle vd ON v.id = vd.id_venta
-            JOIN productos pd ON vd.id_producto = pd.id
-            WHERE v.fecha BETWEEN '$startDate' AND '$endDate'
-            GROUP BY pd.id
-            ORDER BY total DESC
-            LIMIT 1
-        ";
-        return fetchSingleResult($db, $query);
-    }
+    // Generar los rangos de fechas dinámicamente
     $currentYear = date('Y');
-
-    // Generate date ranges dynamically
     $dateRanges = generateYearlyDateRanges($currentYear);
 
+    // Llamar a la función para obtener categorías, subcategorías y productos relacionados
+    $categorySubcategoryProductData = fetchCategorySubcategoryProductData($db);
+    $categorias = $categorySubcategoryProductData['categorias'];
+    $subCategorias = $categorySubcategoryProductData['subCategorias'];
+    $productos = $categorySubcategoryProductData['productos'];
 
-    // Arrays to store results
-    $subCategorias = [];
-    $productos = [];
-
-    // Loop through date ranges and fetch data
-    foreach ($dateRanges as $startDate => $endDate) {
-        $subCategoria = fetchSubCategoryData($db, $startDate, $endDate);
-        $product = fetchProductData($db, $startDate, $endDate);
-
-        if ($subCategoria) {
-            $subCategorias[] = [
-                'id' => (int) $subCategoria['id'],
-                'nombre' => $subCategoria['nombre']
-            ];
-        }
-
-        if ($product) {
-            $productos[] = [
-                'id' => (int) $product['id'],
-                'nombre' => $product['nombre'],
-                'imagen' => "https://i.imgur.com/UVlQLGm.jpg"
-            ];
-        }
-    }
-
-    // Fetch other required data (waste, sales, demands, etc.)
+    // Consultar otros datos adicionales como desperdicios, ventas, demandas, ofertas, estaciones, etc.
     $query = "
         SELECT CASE DATE_FORMAT(fecha, '%m')
             WHEN '01' THEN 'Verano'
@@ -158,11 +159,10 @@ $app->get("/api", function () use ($db, $app) {
         GROUP BY estacion, cod_estacion, mes 
         ORDER BY mes ASC
     ";
-
     $result = $db->query($query);
     $waste = [];
     $season = [];
-    while ($row = $result->fetch_array()) {
+    while ($row = $result->fetch_assoc()) {
         $waste[] = (int) $row['total'];
         $season[] = [
             'cod_estacion' => (int) $row['cod_estacion'],
@@ -171,52 +171,62 @@ $app->get("/api", function () use ($db, $app) {
         ];
     }
 
+    // Consultar ventas agrupadas por mes
     $sales = [];
     $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, SUM(valor_total) total 
-                            FROM ventas 
-                            WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
-                            AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
-                            GROUP BY mes 
-                            ORDER BY mes ASC");
-    while ($row = $result->fetch_array()) {
+                          FROM ventas 
+                          WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                          AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+                          GROUP BY mes 
+                          ORDER BY mes ASC");
+    while ($row = $result->fetch_assoc()) {
         $sales[] = (int) $row['total'];
     }
 
+    // Consultar demandas
     $demand = [];
     $result = $db->query("SELECT DATE_FORMAT(fecha, '%y%m') mes, COUNT(id) total 
-                            FROM compras  
-                            WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
-                            AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
-                            GROUP BY mes 
-                            ORDER BY mes ASC");
-    while ($row = $result->fetch_array()) {
+                          FROM compras  
+                          WHERE fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                          AND fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+                          GROUP BY mes 
+                          ORDER BY mes ASC");
+    while ($row = $result->fetch_assoc()) {
         $demand[] = (int) $row['total'];
     }
 
+    // Consultar ofertas
     $offers = [];
     $result = $db->query("SELECT DATE_FORMAT(v.fecha, '%Y-%m') AS mes, COUNT(vd.id_producto) AS total 
-                            FROM ventas v 
-                            JOIN venta_detalle vd ON v.id = vd.id_venta 
-                            WHERE v.fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
-                            AND v.fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
-                            GROUP BY mes 
-                            ORDER BY mes ASC");
-    while ($row = $result->fetch_array()) {
+                          FROM ventas v 
+                          JOIN venta_detalle vd ON v.id = vd.id_venta 
+                          WHERE v.fecha >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m-01 00:00:00')
+                          AND v.fecha < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+                          GROUP BY mes 
+                          ORDER BY mes ASC");
+    while ($row = $result->fetch_assoc()) {
         $offers[] = (int) $row['total'];
     }
 
+    // Consultar ventas por día
     $ventas_por_dia = [];
-    $result = $db->query("SELECT DATE(v.fecha) as fecha, DATE_FORMAT(v.fecha, '%d-%m-%y') as formatted_date, count(DISTINCT vd.id_producto) total FROM ventas v JOIN venta_detalle vd ON v.id = vd.id_venta WHERE v.fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 4 MONTH) AND CURDATE() GROUP BY fecha ORDER BY fecha ASC");
-    while ($row = $result->fetch_array()) {
+    $result = $db->query("SELECT DATE(v.fecha) as fecha, DATE_FORMAT(v.fecha, '%d-%m-%y') as formatted_date, count(DISTINCT vd.id_producto) total 
+                          FROM ventas v 
+                          JOIN venta_detalle vd ON v.id = vd.id_venta 
+                          WHERE v.fecha BETWEEN DATE_SUB(CURDATE(), INTERVAL 4 MONTH) AND CURDATE() 
+                          GROUP BY fecha 
+                          ORDER BY fecha ASC");
+    while ($row = $result->fetch_assoc()) {
         $ventas_por_dia[] = [
             'fecha' => $row['formatted_date'],
             'total' => (int) $row['total']
         ];
     }
 
+    // Respuesta final con toda la estructura respetada
     $data = [
         "status" => 200,
-        "categorias" => array_fill(0, 4, ['id' => 1, 'nombre' => 'charcuteria']),
+        "categorias" => $categorias,
         "subCategorias" => $subCategorias,
         "kilosFlag" => [0, 1, 1, 1],
         "productos" => $productos,
@@ -228,8 +238,12 @@ $app->get("/api", function () use ($db, $app) {
         'ventas_x_dia' => $ventas_por_dia
     ];
 
+    // Enviar la respuesta JSON
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
 });
+
+
+
 
 function generateYearlyDateRanges($year)
 {
