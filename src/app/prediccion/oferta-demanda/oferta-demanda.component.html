@@ -1,1 +1,34 @@
-<p>oferta-demanda works!</p>
+<div class="container">
+  <h2>Predicción de Oferta y Demanda</h2>
+
+  <!-- Dropdown to select the prediction range -->
+  <div class="form-group">
+    <label for="predictionRange"
+      >Seleccione el Rango de Predicción (Meses):</label
+    >
+    <select
+      id="predictionRange"
+      class="form-control"
+      (change)="onPredictionRangeChange($event)"
+    >
+      <option value="1" selected>1 Mes</option>
+      <option value="2">2 Meses</option>
+      <option value="3">3 Meses</option>
+    </select>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="alert alert-info">
+    Cargando datos y entrenando modelo, por favor espere...
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Chart container -->
+  <div *ngIf="!isLoading && !errorMessage" style="height: 400px">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>
