@@ -129,6 +129,39 @@ export const ROUTES: RouteInfo[] = [
   },
 ];
 
+export const ROUTESUSER: RouteInfo[] = [
+  {path: '/ventas', title: 'Ventas', icon: 'person', class: '', child: []},
+
+  {
+    path: '/productos',
+    title: 'Productos',
+    icon: 'library_books',
+    class: '',
+    child: [
+      {
+        pat: '/productos/listado',
+        tit: 'Listado',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/productos/inventario',
+        tit: 'Inventarios',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/productos/compras',
+        tit: 'Compras',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+    ],
+  },
+
+];
+
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -136,6 +169,8 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
   menuItems: any[];
+  menuItemsUser: any[];
+  currentname:string='';
 
   constructor(private _serviceRutas: ServicesService) {}
 
@@ -145,7 +180,9 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentname = localStorage.getItem("currentNombre");
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
+    this.menuItemsUser = ROUTESUSER.filter((menuItemU) => menuItemU);
   }
   isMobileMenu() {
     if ($(window).width() > 991) {
