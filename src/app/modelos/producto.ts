@@ -16,6 +16,7 @@ export class Producto {
         public ISCTypeDesc:string,
         public FlagICBPER:string,
         public FlagLotSerial:string,
+        public usuario:string
     ){}
 }
 

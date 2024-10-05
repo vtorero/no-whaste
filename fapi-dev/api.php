@@ -42,7 +42,7 @@ $app->get("/usuarios",function() use($db,$app){
 /*Productos*/
 $app->get("/productos",function() use($db,$app){
     header("Content-type: application/json; charset=utf-8");
-    $resultado = $db->query("SELECT p.id,codigo,p.nombre,p.peso,c.nombre nombrecategoria,s.nombre subcategoria,costo,IGV,precio_sugerido,c.id id_categoria,id_subcategoria,usuario FROM  productos p, categorias c,sub_categorias s WHERE  p.id_subcategoria=s.id and p.id_categoria=c.id");
+    $resultado = $db->query("SELECT p.id,codigo,p.nombre,p.peso,c.nombre nombrecategoria,s.nombre subcategoria,costo,IGV,precio_sugerido,c.id id_categoria,id_subcategoria,usuario FROM  productos p, categorias c,sub_categorias s WHERE  p.id_subcategoria=s.id and p.id_categoria=c.id order by id desc");
     $prods=array();
         while ($fila = $resultado->fetch_array()) {
 
@@ -471,8 +471,10 @@ $app->get("/categorias",function() use($db,$app){
            $json = $app->request->getBody();
            $j = json_decode($json,true);
            $data = json_decode($j['json']);
-           $codigo=(is_array($data->codigo))? array_shift($data->codigo): $data->codigo;
-           $query ="DELETE FROM productos WHERE codigo="."'{$codigo}'";
+      
+       
+           $codigo=(is_array($data->producto->codigo))? array_shift($data->codigo): $data->producto->codigo;
+            $query ="DELETE FROM productos WHERE codigo="."'{$codigo}'";
            $db->query($query);
 
            $result = array("STATUS"=>true,"messaje"=>"Producto eliminado correctamente","string"=>$query);
@@ -521,7 +523,7 @@ $app->get("/producto/:id",function($id) use($db,$app){
            $json = $app->request->getBody();
            $j = json_decode($json,true);
            $data = json_decode($j['json']);
-
+       
            $codigo=(is_array($data->codigo))? array_shift($data->codigo): $data->codigo;
             $nombre=(is_array($data->nombre))? array_shift($data->nombre): $data->nombre;
             $peso=(is_array($data->peso))? array_shift($data->peso): $data->peso;

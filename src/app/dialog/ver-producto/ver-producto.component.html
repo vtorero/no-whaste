@@ -1,0 +1,51 @@
+<div>
+    <h1 mat-dialog-title>Ver Producto : {{data.nombre}}</h1>
+    <div mat-dialog-content>
+        <div style="display: flex;flex-direction: column; margin:1rem auto;  padding: 1rem;">
+            <form  [formGroup]="form">
+            <div class="row">
+                <div class="col-3"> 
+                    <mat-form-field>
+                    <input matInput [(ngModel)]="data.codigo" type="text" placeholder="código" required formControlName="codigo">
+                </mat-form-field></div>
+                <div class="col-9"> <mat-form-field>
+                    <input matInput [(ngModel)]="data.nombre" type="text" placeholder="Ingrese nombre" required formControlName="nombre">
+                </mat-form-field></div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="data.peso" type="text" placeholder="Ingrese el peso" required formControlName="peso">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="data.costo" type="number" placeholder="S/.Ingrese costo" required formControlName="costo">
+                        <input hidden [(ngModel)]="usuario" type="text">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">    <mat-form-field>
+                    <mat-label>Categoria</mat-label>
+                    <mat-select [(ngModel)]="data.id_categoria" (ngModelChange)="handleCagetoria(data.id_categoria)" formControlName="categoria">
+                      <mat-option  *ngFor="let cat of dataSource" [value]="cat.id" >
+                        {{cat.nombre}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field></div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <mat-label>Subcategoria</mat-label>
+                        <mat-select [(ngModel)]="data.id_subcategoria" formControlName="subcategoria">
+                          <mat-option  *ngFor="let cat of dataSubcategoria" [value]="cat.id" >
+                            {{cat.nombre}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="cancelar()">Cancelar</button>
+        <button mat-raised-button color="primary" mat-button [mat-dialog-close]="data" cdkFocusInitial [disabled]="form.invalid">Actualizar</button>
+    </div>
+    </div>

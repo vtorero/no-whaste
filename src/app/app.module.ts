@@ -50,6 +50,7 @@ import {ComprasComponent} from './compras/compras.component';
 import {AddComprasComponent} from './compras/add-compras/add-compras.component';
 import {AddDetalleComponent} from './compras/add-compras/add-detalle/add-detalle.component';
 import { OfertaDemandaComponent } from './prediccion/oferta-demanda/oferta-demanda.component';
+import { VerProductoComponent } from './dialog/ver-producto/ver-producto.component';
 
 @NgModule({
   imports: [
@@ -106,6 +107,7 @@ import { OfertaDemandaComponent } from './prediccion/oferta-demanda/oferta-deman
     AddComprasComponent,
     AddDetalleComponent,
     OfertaDemandaComponent,
+    VerProductoComponent,
   ],
   providers: [
     {provide: MatPaginatorIntl, useClass: PaginatorEspañol},

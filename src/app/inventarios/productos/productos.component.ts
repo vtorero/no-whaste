@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'app/api.service';
 import { AddProductoComponent } from 'app/dialog/add-producto/add-producto.component';
 import { OpenDialogComponent } from 'app/dialog/open-dialog/open-dialog.component';
+import { VerProductoComponent } from 'app/dialog/ver-producto/ver-producto.component';
 import { Producto } from 'app/modelos/producto';
 import { Usuario } from 'app/modelos/usuario';
 
@@ -76,18 +77,13 @@ openBusqueda(){
   }
 
   openDialogEdit(enterAnimationDuration: string, exitAnimationDuration: string): void {
+    console.log(this.selectedRowIndex)
     if(this.selectedRowIndex){
-    const dialog= this.dialog.open(AddProductoComponent, {
-      width: '400px',
+    const dialog= this.dialog.open(VerProductoComponent, {
+      width: '700px',
       enterAnimationDuration,
       exitAnimationDuration,
-      data: {
-        id:this.selectedRowIndex.id,
-           nombre:this.selectedRowIndex.nombres,
-           correo:this.selectedRowIndex.email,
-           estado:this.selectedRowIndex.estado,
-           clase:'Usuario'
-      },
+      data: this.selectedRowIndex     
     });
     dialog.afterClosed().subscribe(ux => {
       if (ux!= undefined)
@@ -104,13 +100,11 @@ openBusqueda(){
     width: '400px',
     enterAnimationDuration,
     exitAnimationDuration,
-    data: {
-      clase:'DelUsuario',
-      usuario:this.selectedRowIndex
-    },
+    data:{
+    producto:this.selectedRowIndex,
+    clase:'DelProducto'}
   });
   dialogo2.afterClosed().subscribe(ux => {
-    console.log("delete");
     this.eliminar(ux);
    });
 
@@ -135,9 +129,10 @@ openBusqueda(){
 
   }
 
-  update(art:Usuario) {
+  update(art:Producto) {
     if(art){
-    this.api.actualizarUsuario(art).subscribe(
+    art.usuario=localStorage.getItem("currentNombre");
+    this.api.EditarProducto(art).subscribe(
       data=>{
         this._snackBar.open(data['messaje'],'OK',{duration:5000,horizontalPosition:'center',verticalPosition:'top'});
         this.renderDataTable();
@@ -151,6 +146,7 @@ openBusqueda(){
 
   agregar(art:Producto) {
     if(art){
+      art.usuario=localStorage.getItem("currentNombre");
     this.api.GuardarProducto(art).subscribe(
       data=>{
         this._snackBar.open(data['messaje'],'OK',{duration:5000,horizontalPosition:'center',verticalPosition:'top'});
@@ -161,16 +157,16 @@ openBusqueda(){
   }
 }
 
-eliminar(art:Usuario) {
-  console.log("art",art);
+eliminar(art:Producto) {
   if(art){
-  this.api.eliminarUsuario(art).subscribe(
+  this.api.EliminarProducto(art).subscribe(
     data=>{
       this._snackBar.open(data['messaje'],'OK',{duration:5000,horizontalPosition:'center',verticalPosition:'top'});
+      this.renderDataTable();
       },
     erro=>{console.log(erro)}
       );
-    this.renderDataTable();
+   
 }
 }
 
