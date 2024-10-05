@@ -415,11 +415,7 @@ agregar(art:Venta) {
 
 
       if (art.imprimir) {
-
-
-
-
-        sendInvoice(JSON.stringify(boleta), boleta.serie + boleta.correlativo,'https://facturacion.apisperu.com/api/v1/invoice/pdf');
+        sendInvoice(JSON.stringify(boleta), boleta.serie +boleta.correlativo,'https://facturacion.apisperu.com/api/v1/invoice/pdf');
       }
       this.cargando=false;
 

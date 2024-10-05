@@ -19,7 +19,6 @@ declare interface Child {
   cls: string;
 }
 export const ROUTES: RouteInfo[] = [
-  {path: '/ventas', title: 'Ventas', icon: 'person', class: '', child: []},
   {
     path: '/dashboard',
     title: 'Reportes',
@@ -27,7 +26,12 @@ export const ROUTES: RouteInfo[] = [
     class: '',
     child: [],
   },
-  {
+  {path: '/ventas',
+  title: 'Ventas',
+  icon: 'person', class: '',
+  child: []
+},
+ {
     path: '/comparar/main',
     title: 'Modelos Predictivos',
     icon: 'dashboard',
