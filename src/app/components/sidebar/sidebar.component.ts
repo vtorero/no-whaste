@@ -100,7 +100,7 @@ export const ROUTES: RouteInfo[] = [
   },
   {
     path: '/productos',
-    title: 'Productos',
+    title: 'Gestión de Inventario',
     icon: 'library_books',
     class: '',
     child: [
