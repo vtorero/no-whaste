@@ -471,8 +471,8 @@ $app->get("/categorias",function() use($db,$app){
            $json = $app->request->getBody();
            $j = json_decode($json,true);
            $data = json_decode($j['json']);
-      
-       
+
+
            $codigo=(is_array($data->producto->codigo))? array_shift($data->codigo): $data->producto->codigo;
             $query ="DELETE FROM productos WHERE codigo="."'{$codigo}'";
            $db->query($query);
@@ -523,7 +523,7 @@ $app->get("/producto/:id",function($id) use($db,$app){
            $json = $app->request->getBody();
            $j = json_decode($json,true);
            $data = json_decode($j['json']);
-       
+
            $codigo=(is_array($data->codigo))? array_shift($data->codigo): $data->codigo;
             $nombre=(is_array($data->nombre))? array_shift($data->nombre): $data->nombre;
             $peso=(is_array($data->peso))? array_shift($data->peso): $data->peso;
@@ -954,7 +954,21 @@ $app->get("/ventas",function() use($db,$app){
         $respuesta=json_encode($prods);
         echo  $respuesta;
 });
+$app->get("/inventario/:id",function($id) use($db,$app){
+    header("Content-type: application/json; charset=utf-8");
+    $resultado = $db->query("SELECT i.id,p.codigo,`id_producto`,p.nombre, `id_producto`,`presentacion`,`granel`,`cantidad`,format((p.peso*i.cantidad)/1000,2) peso,`merma`, DATE_FORMAT(fecha_produccion, '%Y-%m-%d')  fecha_produccion,DATE_FORMAT(now(), '%Y-%m-%d')  fecha_vencimiento,datediff(now(),fecha_produccion) `dias`, `estado`, `ciclo`, `id_usuario`
+    FROM `inventario` i, productos p where i.cantidad>0 and datediff(now(),fecha_produccion) between 6 and 7 and i.id_producto=p.id and i.id={$id}");
 
+    $prods=array();
+    while ($fila = $resultado->fetch_array()) {
+
+        $prods[]=$fila;
+    }
+    $respuesta=json_encode($prods);
+    echo  $respuesta;
+
+
+});
 
 $app->get("/inventarios/:id",function($id) use($db,$app){
     header("Content-type: application/json; charset=utf-8");

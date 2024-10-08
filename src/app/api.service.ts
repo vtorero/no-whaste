@@ -97,7 +97,7 @@ export class ApiService {
       .pipe(map((result) => result));
   }
 
-  
+
   getCompras() {
     return this._http
       .get(Global.BASE_API_URL + "api.php/compras", { headers: this.headers })
@@ -266,6 +266,10 @@ public GuardarComprobante(Boleta):Observable<any>{
     return this._http.get(Global.BASE_API_URL + 'api.php/' + tabla+criterio,
       { headers: this.headers }
     ).pipe(map(result => result));
+  }
+
+  getAvisoInventario(id:string): Observable<Avisos[]> {
+    return this._http.get<Avisos[]>(Global.BASE_API_URL + 'api.php/inventario/'+id, { headers: this.headers });
   }
 
 

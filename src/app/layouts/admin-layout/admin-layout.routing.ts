@@ -89,6 +89,7 @@ export const AdminLayoutRoutes: Routes = [
   {path: 'redneuronal', component: RedneuronalComponent},
   {path: 'ventas', component: VentasComponent},
   {path: 'productos/listado', component: ProductosComponent},
+  {path: 'productos/inventario/:id', component: InventariosComponent},
   {path: 'productos/inventario', component: InventariosComponent},
   {path: 'productos/compras', component: ComprasComponent},
   {path: 'productos', component: ProductosComponent},

@@ -6,9 +6,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Add } from '@tensorflow/tfjs';
 import { ApiService } from 'app/api.service';
 import { Inventario } from 'app/models/inventario';
+import {Router,ActivatedRoute,Params} from '@angular/router';
 import { AgregarInventarioComponent } from '../../dialog/agregar-inventario/agregar-inventario.component';
 
 @Component({
@@ -23,19 +23,42 @@ export class InventariosComponent implements OnInit {
   position = new FormControl('below');
   buscador:boolean=false;
   dataSource: any;
+  public parametros;
   selectedRowIndex:any;
   cancela: boolean = false;
   selection = new SelectionModel(false, []);
   displayedColumns = ['id','codigo','producto','presentacion','cantidad', 'peso', 'fecha_produccion','fecha_vencimiento','dias'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('empTbSort') empTbSort = new MatSort();
-  constructor(public dialog: MatDialog,
+  constructor(
+    public dialog: MatDialog,
+    private _route:ActivatedRoute,
+    private _router:Router,
     private _snackBar: MatSnackBar,
     private api: ApiService,
   ) { }
 
   ngOnInit(): void {
+    this._route.params.forEach((params:Params)=>{
+      this.parametros=params['id'];
+      this.api.getAvisoInventario(this.parametros).subscribe(x => {
+        this.dataSource = new MatTableDataSource();
+        this.dataSource.data = x;
+        this.empTbSort.disableClear = true;
+        this.dataSource.sort = this.empTbSort;
+        this.dataSource.paginator = this.paginator;
+        },
+        error => {
+          console.log('Error de conexion de datatable!' + error);
+
+    });
+  });
+  console.log("parame!",this.parametros)
+  if( this.parametros==undefined){
     this.renderDataTable();
+  }
+
+
   }
 
   applyFilter(filterValue: string) {

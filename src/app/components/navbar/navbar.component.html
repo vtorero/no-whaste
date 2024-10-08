@@ -43,7 +43,7 @@
                         </p>-->
                     </a>
                     <div *ngIf="dataSource.length>0"  class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                       <a *ngFor="let link of dataSource;let index = index" class="dropdown-item" href="javascript:void(0)">{{link.nombre}} (Dias vencidos {{link.dias}})</a>
+                       <a *ngFor="let link of dataSource;let index = index" class="dropdown-item" [routerLink]="['/productos/inventario/'+link.id]">{{link.nombre}} (Dias vencidos {{link.dias}})</a>
                         <!--<a class="dropdown-item" href="javascript:void(0)">You have 5 new tasks</a>
                         <a class="dropdown-item" href="javascript:void(0)">You're now friend with Andrew</a>
                         <a class="dropdown-item" href="javascript:void(0)">Another Notification</a>

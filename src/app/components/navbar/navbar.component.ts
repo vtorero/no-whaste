@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit {
    renderAvisos(){
     this.api.getAvisosInventarios().subscribe(data=>{
      (data.length>0) ? this.dataSource=data: this.dataSource=0;
-      //console.log("inventario vencido",data);
+      console.log("inventario vencido",data);
     });
    }
 
