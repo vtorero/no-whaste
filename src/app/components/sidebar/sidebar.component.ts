@@ -21,7 +21,7 @@ declare interface Child {
 export const ROUTES: RouteInfo[] = [
   {
     path: '/dashboard',
-    title: 'Reportes',
+    title: 'Dashboard',
     icon: 'dashboard',
     class: '',
     child: [],
@@ -31,6 +31,7 @@ export const ROUTES: RouteInfo[] = [
   icon: 'person', class: '',
   child: []
 },
+/*
  {
     path: '/comparar/main',
     title: 'Modelos Predictivos',
@@ -57,6 +58,7 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+  */
   /*{ path: '/redneuronal', title: 'Red Neuronal',  icon:'dashboard', class: '',child:[]},*/
   {
     path: '/estadisticas',

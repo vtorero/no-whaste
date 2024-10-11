@@ -21,6 +21,7 @@ import { DetalleVenta } from 'app/models/detalleVenta';
 import { Company } from 'app/models/Boleta/company';
 import { Client } from '../models/Boleta/cliente';
 import { EditarComponent } from './editar/editar.component';
+import { MatCardLgImage } from '@angular/material/card';
 
 function sendInvoice(data,nro,url) {
   fetch(url, {
@@ -158,8 +159,12 @@ openBusqueda(){
       data: this.selectedRowIndex
     });
     dialog.afterClosed().subscribe(ux => {
-      if (ux!= undefined)
-      this.update(ux)
+      console.log("ver impresion",ux)
+      const v =this.visualizar(ux);
+      console.log("vvvv",v);
+      //sendInvoice(JSON.stringify(ux), ux.nro_comprobante,'https://facturacion.apisperu.com/api/v1/invoice/pdf');
+      //if (ux!= undefined)
+      //this.update(ux)
      });
 
   }else{
