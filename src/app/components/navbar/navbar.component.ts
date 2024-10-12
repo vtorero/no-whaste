@@ -28,10 +28,12 @@ export class NavbarComponent implements OnInit {
     }
 
    renderAvisos(){
+    this.nombreUsuario=localStorage.getItem('currentNombre');
     this.api.getAvisosInventarios().subscribe(data=>{
-     (data.length>0) ? this.dataSource=data: this.dataSource=0;
-      console.log("inventario vencido",data);
-    });
+
+     (data.length>0 && this.nombreUsuario=='comercial') ? this.dataSource=data: this.dataSource=0;
+
+     });
    }
 
     ngOnInit(){

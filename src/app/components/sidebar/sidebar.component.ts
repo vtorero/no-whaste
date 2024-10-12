@@ -100,6 +100,7 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+
   {
     path: '/productos',
     title: 'Gestión de Inventario',
@@ -126,6 +127,7 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+
   {
     path: '/seguridad',
     title: 'Seguridad',
@@ -137,7 +139,7 @@ export const ROUTES: RouteInfo[] = [
 
 export const ROUTESUSER: RouteInfo[] = [
   {path: '/ventas', title: 'Ventas', icon: 'person', class: '', child: []},
-
+/*
   {
     path: '/productos',
     title: 'Productos',
@@ -164,29 +166,33 @@ export const ROUTESUSER: RouteInfo[] = [
       },
     ],
   },
+*/
 
 ];
 export const ROUTECOMERCIAL: RouteInfo[] = [
   {
+    path: '/dashboard',
+    title: 'Dashboard',
+    icon: 'dashboard',
+    class: '',
+    child: [],
+  },
+  {
     path: '/estadisticas',
     title: 'Estadisticas',
     icon: 'dashboard',
-    redirectTo: '/estadisticas/mermas',
-    pathMatch: 'full',
+    //redirectTo: '/estadisticas/oferta-demanda',
+    //pathMatch: 'full',
     class: '',
     child: [
       {
-        pat: '/estadisticas/mermas',
-        tit: 'Mermas',
+        pat: '/estadisticas/oferta-demanda',
+        tit: 'Oferta y Demanda',
         icn: 'bubble_chart',
         cls: 'library_books',
       },
-      {
-        pat: '/estadisticas/reduccion',
-        tit: 'Reducción',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
+   
+    
       {
         pat: '/estadisticas/estrategias',
         tit: 'Estrategias',
@@ -199,14 +205,9 @@ export const ROUTECOMERCIAL: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
-      {
-        pat: '/estadisticas/oferta-demanda',
-        tit: 'Oferta y Demanda',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
+     
     ],
-  }
+  },
 ];
 
 @Component({

@@ -57,7 +57,7 @@ loginUser(usuario,password){
             localStorage.setItem("currentAvatar",data['data'][0]['avatar']);
             localStorage.setItem("currentEmpresa",data['data'][0]['nombre']);
             sessionStorage.setItem("hashsession",data['data'][0]['hash']);
-            (data['data'][0]['nombre']=="admin") ? this._router.navigate(['dashboard']): this._router.navigate(['ventas']);
+            (data['data'][0]['nombre']=="admin" || data['data'][0]['nombre']=="comercial") ? this._router.navigate(['dashboard']): this._router.navigate(['ventas']);
             //this.router.navigate(['dash/reportes']);
 
           }else{

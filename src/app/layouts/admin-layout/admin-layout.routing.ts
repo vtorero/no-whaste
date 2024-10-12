@@ -107,7 +107,7 @@ export const AdminLayoutRoutes: Routes = [
   {
     path: 'estadisticas',
     children: [
-      {path: '', redirectTo: 'mermas', pathMatch: 'full'},
+      {path: '', redirectTo: 'oferta-demanda', pathMatch: 'full'},
       {path: 'mermas', component: MermasComponent},
       {path: 'reduccion', component: ReduccionComponent},
       {path: 'estrategias', component: EstrategiaComponent},
