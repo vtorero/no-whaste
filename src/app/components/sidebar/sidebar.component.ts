@@ -166,7 +166,48 @@ export const ROUTESUSER: RouteInfo[] = [
   },
 
 ];
-
+export const ROUTECOMERCIAL: RouteInfo[] = [
+  {
+    path: '/estadisticas',
+    title: 'Estadisticas',
+    icon: 'dashboard',
+    redirectTo: '/estadisticas/mermas',
+    pathMatch: 'full',
+    class: '',
+    child: [
+      {
+        pat: '/estadisticas/mermas',
+        tit: 'Mermas',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/estadisticas/reduccion',
+        tit: 'Reducción',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/estadisticas/estrategias',
+        tit: 'Estrategias',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/estadisticas/proyeccion',
+        tit: 'Proyección',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/estadisticas/oferta-demanda',
+        tit: 'Oferta y Demanda',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+    ],
+  }
+];
 
 @Component({
   selector: 'app-sidebar',
@@ -176,6 +217,7 @@ export const ROUTESUSER: RouteInfo[] = [
 export class SidebarComponent implements OnInit {
   menuItems: any[];
   menuItemsUser: any[];
+  menuItemComercial:any[];
   currentname:string='';
 
   constructor(private _serviceRutas: ServicesService) {}
@@ -189,6 +231,7 @@ export class SidebarComponent implements OnInit {
     this.currentname = localStorage.getItem("currentNombre");
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
     this.menuItemsUser = ROUTESUSER.filter((menuItemU) => menuItemU);
+    this.menuItemComercial = ROUTECOMERCIAL.filter((menuItemc) => menuItemc);
   }
   isMobileMenu() {
     if ($(window).width() > 991) {
