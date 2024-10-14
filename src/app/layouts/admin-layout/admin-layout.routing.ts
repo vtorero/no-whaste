@@ -14,15 +14,9 @@ import {SeguridadComponent} from '../../seguridad/seguridad/seguridad.component'
 import {UsuarioComponent} from '../../seguridad/usuario/usuario.component';
 import {SucursalesComponent} from '../../seguridad/sucursales/sucursales.component';
 import {VentasComponent} from '../../ventas/ventas.component';
-import {ListadoComponent} from '../../productos/listado/listado.component';
-import {HomeComponent} from 'app/productos/home/home.component';
 import {InventariosComponent} from '../../productos/inventarios/inventarios.component';
-import {cp} from 'fs';
-import {ComparaModelosComponent} from '../../compara-modelos/compara-modelos.component';
 import {RedneuronalComponent} from '../../comparar-modelos/redneuronal/redneuronal.component';
 import {PorProductoComponent} from '../../prediccion/por-producto/por-producto.component';
-import path from 'path';
-import {Component} from '@angular/core';
 import {LinealMultipleComponent} from '../../compara-modelos/lineal-multiple/lineal-multiple.component';
 import {ModeloClasificacionComponent} from '../../compara-modelos/modelo-clasificacion/modelo-clasificacion.component';
 import {LinealSimpleComponent} from '../../compara-modelos/lineal-simple/lineal-simple.component';

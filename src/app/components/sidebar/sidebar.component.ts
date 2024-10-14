@@ -162,8 +162,8 @@ export const ROUTECOMERCIAL: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
-   
-    
+
+
       {
         pat: '/estadisticas/estrategias',
         tit: 'Estrategias',
@@ -176,10 +176,48 @@ export const ROUTECOMERCIAL: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
-     
+
     ],
   },
 ];
+
+export const ROUTELOGISTICA: RouteInfo[] = [
+  {
+    path: '/dashboard',
+    title: 'Dashboard',
+    icon: 'dashboard',
+    class: '',
+    child: [],
+  },
+  {
+    path: '/productos',
+    title: 'Gestión de Inventario',
+    icon: 'library_books',
+    class: '',
+    child: [
+      {
+        pat: '/productos/listado',
+        tit: 'Listado',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/productos/inventario',
+        tit: 'Inventarios',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+      {
+        pat: '/productos/compras',
+        tit: 'Compras',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+    ],
+  },
+];
+
+
 
 @Component({
   selector: 'app-sidebar',
@@ -190,6 +228,7 @@ export class SidebarComponent implements OnInit {
   menuItems: any[];
   menuItemsUser: any[];
   menuItemComercial:any[];
+  menuLogistica:any[];
   currentname:string='';
 
   constructor(private _serviceRutas: ServicesService) {}
@@ -204,6 +243,7 @@ export class SidebarComponent implements OnInit {
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
     this.menuItemsUser = ROUTESUSER.filter((menuItemU) => menuItemU);
     this.menuItemComercial = ROUTECOMERCIAL.filter((menuItemc) => menuItemc);
+    this.menuLogistica = ROUTELOGISTICA.filter((menuLog)=>menuLog);
   }
   isMobileMenu() {
     if ($(window).width() > 991) {
