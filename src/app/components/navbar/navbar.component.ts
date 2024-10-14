@@ -31,7 +31,7 @@ export class NavbarComponent implements OnInit {
     this.nombreUsuario=localStorage.getItem('currentNombre');
     this.api.getAvisosInventarios().subscribe(data=>{
 
-     (data.length>0 && this.nombreUsuario=='comercial') ? this.dataSource=data: this.dataSource=0;
+     (data.length>0 && this.nombreUsuario=='logistica') ? this.dataSource=data: this.dataSource=0;
 
      });
    }

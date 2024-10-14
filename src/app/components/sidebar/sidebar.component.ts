@@ -31,35 +31,6 @@ export const ROUTES: RouteInfo[] = [
   icon: 'person', class: '',
   child: []
 },
-/*
- {
-    path: '/comparar/main',
-    title: 'Modelos Predictivos',
-    icon: 'dashboard',
-    class: '',
-    child: [
-      {
-        pat: '/comparar/lineal-multiple',
-        tit: 'Lineal Multiple',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
-      {
-        pat: '/comparar/modelo-clasificacion',
-        tit: 'Modelo de Clasificación',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
-      {
-        pat: '/comparar/lineal-simple',
-        tit: 'Regresión Lineal simple',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
-    ],
-  },
-  */
-  /*{ path: '/redneuronal', title: 'Red Neuronal',  icon:'dashboard', class: '',child:[]},*/
   {
     path: '/estadisticas',
     title: 'Estadisticas',
@@ -201,7 +172,7 @@ export const ROUTECOMERCIAL: RouteInfo[] = [
       },
       {
         pat: '/estadisticas/proyeccion',
-        tit: 'Proyección',
+        tit: 'Ventas y mermas',
         icn: 'bubble_chart',
         cls: 'library_books',
       },
