@@ -58,7 +58,7 @@ $app->get("/api", function () use ($db, $app) {
     function fetchCategorySubcategoryProductData($db)
     {
         $query = "
-            SELECT 
+          SELECT 
                 cat.id AS categoria_id, 
                 cat.nombre AS categoria_nombre,
                 sc.id AS subcategoria_id, 
@@ -69,6 +69,8 @@ $app->get("/api", function () use ($db, $app) {
             FROM productos pd
             JOIN sub_categorias sc ON pd.id_subcategoria = sc.id
             JOIN categorias cat ON sc.id_categoria = cat.id
+            JOIN inventario i ON i.id_producto = pd.id 
+            where datediff(now(),i.fecha_produccion) between 6 and 7 order by i.fecha_produccion
         ";
 
         $result = $db->query($query);
