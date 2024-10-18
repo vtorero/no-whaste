@@ -162,14 +162,6 @@ export const ROUTECOMERCIAL: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
-
-
-      {
-        pat: '/estadisticas/estrategias',
-        tit: 'Estrategias',
-        icn: 'bubble_chart',
-        cls: 'library_books',
-      },
       {
         pat: '/estadisticas/proyeccion',
         tit: 'Ventas y mermas',
@@ -213,6 +205,27 @@ export const ROUTELOGISTICA: RouteInfo[] = [
         icn: 'bubble_chart',
         cls: 'library_books',
       },
+    ],
+  },
+  {
+    path: '/estadisticas',
+    title: 'Estadisticas',
+    icon: 'dashboard',
+    //redirectTo: '/estadisticas/oferta-demanda',
+    //pathMatch: 'full',
+    class: '',
+    child: [
+
+
+
+      {
+        pat: '/estadisticas/estrategias',
+        tit: 'Estrategias',
+        icn: 'bubble_chart',
+        cls: 'library_books',
+      },
+
+
     ],
   },
 ];

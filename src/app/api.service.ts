@@ -17,7 +17,7 @@ import { Vendedor } from "./models/vendedor";
 import { Venta } from "./models/ventas";
 import { Producto } from "./modelos/producto";
 import { Usuario } from "./modelos/usuario";
-//import { Chart } from 'chart.js';
+
 
 @Injectable({
   providedIn: "root",
